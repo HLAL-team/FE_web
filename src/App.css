@@ -1,0 +1,10 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+  background-color: #fafbfd;
+  min-height: 100vh;
+}
+
+.dark #root {
+  background-color: #1a202c;
+}
