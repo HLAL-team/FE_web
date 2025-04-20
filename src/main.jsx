@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import TransferPage from "./pages/TransferPage.jsx";
+import TopUpPage from "./pages/TopUpPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -23,11 +24,20 @@ createRoot(document.getElementById("root")).render(
             }
           />
 
-<Route
+          <Route
             path="/transfer"
             element={
               // <ProtectedRoute>
               <TransferPage />
+              // </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/topup"
+            element={
+              // <ProtectedRoute>
+              <TopUpPage />
               // </ProtectedRoute>
             }
           />
