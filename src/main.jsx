@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import TransferPage from "./pages/TransferPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -18,6 +19,15 @@ createRoot(document.getElementById("root")).render(
             element={
               // <ProtectedRoute>
               <App />
+              // </ProtectedRoute>
+            }
+          />
+
+<Route
+            path="/transfer"
+            element={
+              // <ProtectedRoute>
+              <TransferPage />
               // </ProtectedRoute>
             }
           />
