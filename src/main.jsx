@@ -9,6 +9,7 @@ import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import TransferPage from "./pages/TransferPage.jsx";
 import TopUpPage from "./pages/TopUpPage.jsx";
+import TrackerPage from "./pages/TrackerPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -38,6 +39,15 @@ createRoot(document.getElementById("root")).render(
             element={
               // <ProtectedRoute>
               <TopUpPage />
+              // </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/tracker"
+            element={
+              // <ProtectedRoute>
+              <TrackerPage />
               // </ProtectedRoute>
             }
           />

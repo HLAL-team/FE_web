@@ -6,6 +6,7 @@ import {
   inputCurrencyFormatter,
 } from "../helper/helper";
 import { useNavigate } from "react-router";
+import Layout from "../components/Layout";
 
 const TopUpPage = () => {
   const sources = ["Credit Card", "Bank Transfer"];
@@ -44,6 +45,7 @@ const TopUpPage = () => {
   };
 
   return (
+    <Layout>
     <div className="dark:text-white">
       <Navbar />
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -133,6 +135,7 @@ const TopUpPage = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 
