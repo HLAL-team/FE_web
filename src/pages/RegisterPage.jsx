@@ -1,9 +1,10 @@
 import Logo from "/hlal-logo.svg";
 import authBanner from "../assets/auth-banner.png";
-import { useState } from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import ModalTnC from "../components/ModalTnC";
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState("");
@@ -12,6 +13,8 @@ const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -35,20 +38,18 @@ const RegisterPage = () => {
           onClick={toggleTheme}
         >
           <div
-            className={`absolute transition-transform duration-300 ${
-              isDark
-                ? "transform translate-y-0 opacity-100"
-                : "transform translate-y-full opacity-0"
-            }`}
+            className={`absolute transition-transform duration-300 ${isDark
+              ? "transform translate-y-0 opacity-100"
+              : "transform translate-y-full opacity-0"
+              }`}
           >
             <Moon key="moon" color="#F8AB39" size={28} />
           </div>
           <div
-            className={`absolute transition-transform duration-300 ${
-              isDark
-                ? "transform -translate-y-full opacity-0"
-                : "transform translate-y-0 opacity-100"
-            }`}
+            className={`absolute transition-transform duration-300 ${isDark
+              ? "transform -translate-y-full opacity-0"
+              : "transform translate-y-0 opacity-100"
+              }`}
           >
             <Sun key="sun" color="#F8AB39" size={28} />
           </div>
@@ -122,6 +123,32 @@ const RegisterPage = () => {
                 />
               </div>
             </div>
+
+            <div className="mt-10 text-left" >
+              <label className="flex items-start gap-2 text-sm/6 text-gray-500 dark:text-gray-300">
+                <input type="checkbox" className="mt-1.5 accent-primary" />
+                <span className="text-left">
+                  Yes, I have read and agree to HLAL’s{" "}
+                  <span
+        role="button"
+        tabIndex={0}
+        onClick={() => setShowModal(true)}
+        onKeyDown={(e) => e.key === "Enter" && setShowModal(true)}
+        className="font-semibold text-primary underline cursor-pointer inline"
+      >
+        Terms and Condition*
+      </span>
+                </span>
+              </label>
+            </div>
+
+            <ModalTnC
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              title="Terms and Conditions"
+            >
+              <p>Isi terms and conditions di sini...</p>
+            </ModalTnC>
 
             <div>
               <button
