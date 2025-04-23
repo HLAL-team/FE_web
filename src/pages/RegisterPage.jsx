@@ -147,7 +147,6 @@ const RegisterPage = () => {
               onClose={() => setShowModal(false)}
               title="Terms and Conditions"
             >
-              <p>Isi terms and conditions di sini...</p>
             </ModalTnC>
 
             <div>

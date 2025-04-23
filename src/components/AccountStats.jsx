@@ -2,8 +2,10 @@ import { Eye, EyeOff, Plus, Send } from "lucide-react";
 import { currencyFormatter } from "../helper/helper";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import bgHero from "../assets/bgHero.png";
 
-const AccountStats = () => {
+
+function AccountStats() {
   const [account, setAccount] = useState({});
 
   useEffect(() => {
@@ -28,11 +30,14 @@ const AccountStats = () => {
       <BalanceInfo balance={currencyFormatter.format(account.amount)} />
     </div>
   );
-};
+}
 
 const AccountInfo = ({ accountNo }) => {
   return (
-    <div className="flex items-center justify-center h-56 w-72 bg-primary text-white rounded-3xl p-6">
+    <div
+      className="flex items-center justify-center h-56 w-72 text-white rounded-3xl p-6 bg-cover bg-center"
+      style={{ backgroundImage: `url(${bgHero})` }}
+    >
       <div>
         <h4 className="font-normal text-xl">Account No</h4>
         <p className="font-bold text-xl">{accountNo}</p>
