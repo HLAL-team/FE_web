@@ -11,6 +11,8 @@ import TransferPage from "./pages/TransferPage.jsx";
 import TopUpPage from "./pages/TopUpPage.jsx";
 import TrackerPage from "./pages/TrackerPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -58,6 +60,15 @@ createRoot(document.getElementById("root")).render(
             element={
               // <ProtectedRoute>
               <LandingPage />
+              // </ProtectedRoute>
+            }
+
+          />
+                    <Route
+            path="/profile"
+            element={
+              // <ProtectedRoute>
+              <ProfilePage />
               // </ProtectedRoute>
             }
           />
