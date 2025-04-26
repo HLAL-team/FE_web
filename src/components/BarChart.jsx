@@ -1,157 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import ApexCharts from 'apexcharts';
 import Chart from 'react-apexcharts';
-import { space } from 'postcss/lib/list';
 
-const BarChart = () => {
-    const months = [
-        { name: "January", value: 0 },
-        { name: "February", value: 1 },
-        { name: "March", value: 2 },
-        { name: "April", value: 3 },
-        { name: "May", value: 4 },
-        { name: "June", value: 5 },
-        { name: "July", value: 6 },
-        { name: "August", value: 7 },
-        { name: "September", value: 8 },
-        { name: "October", value: 9 },
-        { name: "November", value: 10 },
-        { name: "December", value: 11 }
-    ];
+const BarChart = ({ viewMode }) => {
+  const [categories, setCategories] = useState([]);
+  const [seriesData, setSeriesData] = useState({ income: [], outcome: [] });
 
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Default to current month
-    const [daysInMonth, setDaysInMonth] = useState([]);
-    const [ranges, setRanges] = useState([]);
+  useEffect(() => {
+    generateChartData();
+  }, [viewMode]);
 
-    // Function to calculate days in month
-    const getDaysInMonth = (month, year) => {
-        const date = new Date(year, month + 1, 0); // Get the last date of the selected month
-        return date.getDate(); // Return the number of days in that month
-    };
+  const generateChartData = () => {
+    let newCategories = [];
+    let incomeData = [];
+    let outcomeData = [];
 
-    // Function to group days into ranges (1-7, 8-14, etc.)
-    const getDateRanges = (numDays) => {
-        const ranges = [];
-        for (let i = 1; i <= numDays; i += 7) {
-            const end = Math.min(i + 6, numDays); // Ensure the last range doesn't exceed the days in the month
-            ranges.push(`${i}-${end}`);
-        }
-        return ranges;
-    };
+    if (viewMode === 'Daily') {
+      newCategories = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      incomeData = [500, 700, 800, 600, 900, 300, 400];
+      outcomeData = [300, 400, 500, 300, 700, 200, 300];
+    } else if (viewMode === 'Weekly') {
+      newCategories = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      incomeData = [2000, 2500, 3000, 1500];
+      outcomeData = [1200, 1500, 2000, 1000];
+    } else if (viewMode === 'Monthly') {
+      newCategories = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      incomeData = [2000, 2500, 2200, 2700, 3000, 3500, 4000, 3800, 3600, 3900, 4100, 4300];
+      outcomeData = [1500, 1800, 1600, 1900, 2100, 2500, 2700, 2600, 2500, 2700, 2800, 3000];
+    } else if (viewMode === 'Quarterly') {
+      newCategories = ['Q1', 'Q2', 'Q3', 'Q4'];
+      incomeData = [7000, 9000, 11000, 13000];
+      outcomeData = [5000, 6000, 8000, 9000];
+    }
 
-    // Handle change in month selection
-    const handleMonthChange = (e) => {
-        const monthIndex = e.target.value;
-        setSelectedMonth(monthIndex);
-    };
+    setCategories(newCategories);
+    setSeriesData({
+      income: incomeData,
+      outcome: outcomeData,
+    });
+  };
 
-    useEffect(() => {
-        const currentYear = new Date().getFullYear();
-        const days = getDaysInMonth(selectedMonth, currentYear);
-        setDaysInMonth(days);
-        const dateRanges = getDateRanges(days); // Generate date ranges (1-7, 8-14, etc.)
-        setRanges(dateRanges);
-    }, [selectedMonth]);
+  const options = {
+    chart: {
+      type: 'bar',
+      toolbar: { show: false },
+    },
+    xaxis: {
+      categories: categories,
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '35%',
+        borderRadius: 6,
+      },
+    },
+    dataLabels: { enabled: false },
+    fill: { opacity: 1 },
+    colors: ['#057268', '#674729'],
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: (val) => `Rp ${val.toLocaleString()}`,
+      },
+    },
+  };
 
-    // Sample data for income and expense
-    const options = {
-        series: [
-            {
-                name: "Income",
-                color: "#057268",
-                data: [2000, 3000, 2500, 3500, 4000, 4500].slice(0, ranges.length),
-                // data: Array.from({ length: ranges.length }, () => Math.floor(Math.random() * 5000) + 1000),
-            },
-            {
-                name: "Outcome",
-                // data: Array.from({ length: ranges.length }, () => Math.floor(Math.random() * 3000) + 500),
-                color: "#674729",
-                data: [1000, 1500, 1200, 1600, 2000, 1800].slice(0, ranges.length),
-            }
-        ],
-        chart: {
-            type: "bar",
-            width: "100%",
-            height: 400,
-            toolbar: {
-                show: false,
-            },
-            animations: {
-                enabled: true,
-                speed: 800,
-                animateGradually: {
-                    enabled: true,
-                    delay: 150,
-                },
-                dynamicAnimation: {
-                    enabled: true,
-                    speed: 350,
-                }
-            },
-        },
-        xaxis: {
-            categories: ranges, // Ranges of dates (1-7, 8-14, etc.)
-        },
+  const series = [
+    { name: 'Income', data: seriesData.income },
+    { name: 'Outcome', data: seriesData.outcome },
+  ];
 
-        tooltip: {
-            shared: true,
-            intersect: false,
-            formatter: function (value) {
-                return "Rp " + value;
-            }
-        },
-        fill: {
-            opacity: 1,
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false, 
-                columnWidth: "20%",
-                borderRadius: 6,
-            },
-        },
-        dataLabels: { enabled: false },
-        grid: {
-            show: true,
-            padding: {
-                left: 0,
-                right: 0,
-                top: 10,
-            },
-        },
-    };
-
-    return (
-
-        <div className="px-24 ">
-
-            {/* Dropdown for selecting month */}
-            <div className="mb-4 text-right">
-                <select
-                    id="month"
-                    value={selectedMonth}
-                    onChange={handleMonthChange}
-                    className="p-2 border rounded-lg bg-primary text-white"
-                >
-                    {months.map((month) => (
-                        <option key={month.value} value={month.value}>
-                            {month.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {/* ApexCharts Bar Chart */}
-            <div id="chart">
-                <Chart
-                    options={options}
-                    series={options.series}
-                    type="bar"
-                    width="100%"
-                    height={400}
-                />
-            </div>
-        </div>
-    );
+  return (
+    <div className="px-24">
+      <Chart options={options} series={series} type="bar" height={400} />
+    </div>
+  );
 };
+
 export default BarChart;
