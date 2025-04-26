@@ -1,27 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
 
-const BarChart = ({ viewMode }) => {
+const BarChart = ({ viewMode, selectedDateRange, selectedMonth, selectedYear }) => {
   const [categories, setCategories] = useState([]);
   const [seriesData, setSeriesData] = useState({ income: [], outcome: [] });
 
   useEffect(() => {
     generateChartData();
-  }, [viewMode]);
+  }, [viewMode, selectedDateRange, selectedMonth, selectedYear]);
+
+  const getDaysInMonth = (month, year) => {
+    const date = new Date(year, month, 0);
+    return date.getDate();
+  };
 
   const generateChartData = () => {
     let newCategories = [];
     let incomeData = [];
     let outcomeData = [];
 
+    const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(selectedMonth);
+    const daysInMonth = getDaysInMonth(monthIndex + 1, selectedYear); 
+
     if (viewMode === 'Daily') {
-      newCategories = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      incomeData = [500, 700, 800, 600, 900, 300, 400];
-      outcomeData = [300, 400, 500, 300, 700, 200, 300];
+      const ranges = [
+        '1-7', '8-14', '15-21', `22-${daysInMonth}`
+      ];
+
+      const rangeStart = parseInt(selectedDateRange.split('-')[0]);
+      const rangeEnd = parseInt(selectedDateRange.split('-')[1]);
+
+      newCategories = Array.from({ length: rangeEnd - rangeStart + 1 }, (_, i) => rangeStart + i);
+
+      incomeData = Array(newCategories.length).fill(0).map((_, i) => 500 * (i + 1));
+      outcomeData = Array(newCategories.length).fill(0).map((_, i) => 300 * (i + 1)); 
     } else if (viewMode === 'Weekly') {
-      newCategories = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-      incomeData = [2000, 2500, 3000, 1500];
-      outcomeData = [1200, 1500, 2000, 1000];
+      newCategories = ['1-7', '8-14', '15-21', `22-${daysInMonth}`];
+      incomeData = [2000, 2500, 3000, 3500];
+      outcomeData = [1200, 1500, 2000, 1800];
     } else if (viewMode === 'Monthly') {
       newCategories = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
