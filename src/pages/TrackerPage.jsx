@@ -14,9 +14,17 @@ const TrackerPage = () => {
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
 
-  const years = ['2022', '2023', '2024', '2025']; // Add more years as needed
+  const years = ['2022', '2023', '2024', '2025'];
+
+  const getDaysInMonth = (month, year) => {
+    const date = new Date(year, month, 0);
+    return date.getDate();
+  };
 
   const renderDynamicButtons = () => {
+    const monthIndex = months.indexOf(selectedMonth);
+    const daysInMonth = getDaysInMonth(monthIndex + 1, selectedYear); // Get the number of days in the selected month
+
     return (
       <div className="flex flex-wrap space-x-4 mb-8 items-center justify-end">
         {viewMode === 'Daily' && (
@@ -25,7 +33,7 @@ const TrackerPage = () => {
             onChange={(e) => setSelectedDateRange(e.target.value)}
             className="px-4 py-1 rounded-full border-transparent bg-[#188B8B] text-white"
           >
-            {['1-7', '8-14', '15-21', '22-28'].map(range => (
+            {['1-7', '8-14', '15-21', `22-${daysInMonth}`].map((range) => (
               <option key={range} value={range}>
                 {range}
               </option>
@@ -76,11 +84,7 @@ const TrackerPage = () => {
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`px-6 py-2 rounded-full border ${
-                  viewMode === mode
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
+                className={`px-6 py-2 rounded-full border ${viewMode === mode ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800'}`}
               >
                 {mode}
               </button>
@@ -89,7 +93,7 @@ const TrackerPage = () => {
 
           {renderDynamicButtons()}
 
-          <BarChart viewMode={viewMode} />
+          <BarChart viewMode={viewMode} selectedDateRange={selectedDateRange} selectedMonth={selectedMonth} selectedYear={selectedYear} />
 
           <div className="flex justify-between gap-8 px-36 mt-4 mb-16 text-left">
             <div className="w-full md:w-1/2">
