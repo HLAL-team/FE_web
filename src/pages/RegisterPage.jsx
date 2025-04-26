@@ -21,24 +21,26 @@ const RegisterPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-  
-    const formData = new FormData();
-    formData.append("fullname", fullName);
-    formData.append("username", username);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("phoneNumber", phoneNumber);
-    if (avatar) formData.append("avatar", avatar);
-
-    console.log(formData);
     try {
-      const response = await fetch("http://localhost:8080/api/register", {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
-        body: formData,
-        // headers:{
-        //   "Content-Type":"multipart/form-data"
-        // }
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullname: fullName,
+          username: username,
+          email: email,
+          password: password,
+          phoneNumber: phoneNumber,
+        }),
       });
+
+      console.log(fullName);
+      console.log(username);
+      console.log(email);
+      console.log(password);
+      console.log(phoneNumber);
 
       const data = await response.json();
 
@@ -65,14 +67,18 @@ const RegisterPage = () => {
         >
           <div
             className={`absolute transition-transform duration-300 ${
-              isDark ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+              isDark
+                ? "translate-y-0 opacity-100"
+                : "translate-y-full opacity-0"
             }`}
           >
             <Moon color="#F8AB39" size={28} />
           </div>
           <div
             className={`absolute transition-transform duration-300 ${
-              isDark ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+              isDark
+                ? "-translate-y-full opacity-0"
+                : "translate-y-0 opacity-100"
             }`}
           >
             <Sun color="#F8AB39" size={28} />
@@ -129,7 +135,8 @@ const RegisterPage = () => {
               maxLength={12}
               value={phoneNumber}
               onChange={(e) => {
-                if (/^\d*$/.test(e.target.value)) setPhoneNumber(e.target.value);
+                if (/^\d*$/.test(e.target.value))
+                  setPhoneNumber(e.target.value);
               }}
               className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
             />
@@ -142,7 +149,11 @@ const RegisterPage = () => {
             />
 
             <label className="flex items-start gap-2 text-sm text-gray-500 dark:text-gray-300">
-              <input type="checkbox" className="mt-1.5 accent-primary" required />
+              <input
+                type="checkbox"
+                className="mt-1.5 accent-primary"
+                required
+              />
               <span>
                 Yes, I have read and agree to HLAL’s{" "}
                 <span
@@ -182,7 +193,11 @@ const RegisterPage = () => {
 
       {/* Kanan - Banner */}
       <div className="hidden lg:block w-1/2">
-        <img className="h-full object-cover" src={authBanner} alt="Auth Visual" />
+        <img
+          className="h-full object-cover"
+          src={authBanner}
+          alt="Auth Visual"
+        />
       </div>
     </div>
   );

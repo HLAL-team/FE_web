@@ -7,19 +7,43 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const { login } = useAuth();
 
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const isLoggedIn = login(username, password);
-    if (isLoggedIn) {
-      navigate("/");
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.status === "Success") {
+        alert(data.message || "Berhasil Login!");
+        // navigate("/login");
+      } else {
+        alert(data.message || "Gagal Login. Silakan coba lagi.");
+      }
+    } catch {
+      console.error("Error saat Login:", error);
+      alert("Terjadi kesalahan saat Login: " + error.message);
     }
+
+    // const isLoggedIn = login(username, password);
+    // if (isLoggedIn) {
+    //   navigate("/");
+    // }
   };
 
   const { isDark, toggleTheme } = useTheme();
@@ -60,12 +84,16 @@ const LoginPage = () => {
             <div>
               <div className="mt-2">
                 <input
-                  id="username"
-                  name="username"
-                  onChange={(e) => setUsername(e.target.value)}
+                  // id="username"
+                  id="email"
+                  // name="username"
+                  name="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   type="text"
                   required
-                  placeholder="Username"
+                  value={email}
+                  // placeholder="Username"
+                  placeholder="Email"
                   className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
                 />
               </div>
@@ -80,6 +108,7 @@ const LoginPage = () => {
                   type="password"
                   placeholder="Password"
                   required
+                  value={password}
                   className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
                 />
               </div>
