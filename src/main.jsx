@@ -22,27 +22,27 @@ createRoot(document.getElementById("root")).render(
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
               <App />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 
           <Route
             path="/transfer"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
               <TransferPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 
           <Route
             path="/topup"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
               <TopUpPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 

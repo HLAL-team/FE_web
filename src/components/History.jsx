@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import { currencyFormatter, datetimeFormatter } from "../helper/helper";
+import { currencyFormatter } from "../helper/helper";
 
 const History = () => {
   return (
@@ -56,81 +56,76 @@ const SearchAndFilter = () => {
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
+  
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch("")
+        const response = await fetch("http://localhost:8080/api/transactions", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Kirim token di header Authorization
+            "Content-Type": "application/json",
+          },
+        });
 
-        
         if (!response.ok) throw new Error("Data tidak ditemukan");
+
         const data = await response.json();
-        setTransactions(data);
+        setTransactions(data.data); // Sesuaikan data dengan format yang diterima dari API (data.data)
       } catch (err) {
         alert(err.message);
       }
     };
 
-    fetchAccount();
-  }, []);
+    if (token) {
+      fetchAccount();
+    } else {
+      alert("Token tidak ditemukan! Anda perlu login.");
+    }
+  }, [token]);
 
   return (
     <div className="container py-6 min-w-full">
       <table className="min-w-full table-auto border-collapse border border-gray-100 dark:border-gray-900">
         <thead>
           <tr className="bg-white dark:bg-black">
-            <th className="px-4 py-2 text-left border-b dark:border-black">
-              Date & Time
-            </th>
-            <th className="px-4 py-2 text-left border-b dark:border-black">
-              Type
-            </th>
-            <th className="px-4 py-2 text-left border-b dark:border-black">
-              From/To
-            </th>
-            <th className="px-4 py-2 text-left border-b dark:border-black">
-              Description
-            </th>
-            <th className="px-4 py-2 text-left border-b dark:border-black">
-              Amount
-            </th>
+            <th className="px-4 py-2 text-left border-b dark:border-black">Date & Time</th>
+            <th className="px-4 py-2 text-left border-b dark:border-black">Type</th>
+            <th className="px-4 py-2 text-left border-b dark:border-black">From/To</th>
+            <th className="px-4 py-2 text-left border-b dark:border-black">Description</th>
+            <th className="px-4 py-2 text-left border-b dark:border-black">Amount</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((transaction, index) => (
             <tr
-              key={index}
+              key={transaction.transactionId}
               className="odd:bg-gray-100 dark:odd:bg-gray-900 even:bg-white dark:even:bg-black"
             >
               <td className="px-4 py-2 border-b dark:border-black text-left">
-                {datetimeFormatter(transaction.id)}
+                {transaction.transactionDateFormatted}
               </td>
               <td className="px-4 py-2 border-b dark:border-black text-left">
-                {transaction.name}
+                {transaction.transactionType}
               </td>
               <td className="px-4 py-2 border-b dark:border-black text-left">
-                {transaction.from}
+                {transaction.recipient ? transaction.recipient : transaction.sender}
               </td>
               <td className="px-4 py-2 border-b dark:border-black text-left">
                 {transaction.description}
               </td>
-              {transaction.type === "DEBIT" ? (
-                <td
-                  className={`px-4 py-2 border-b dark:border-black text-left text-red-500`}
-                >
-                  - {currencyFormatter.format(Math.abs(transaction.amount))}
-                </td>
-              ) : transaction.type === "CREDIT" ? (
-                <td
-                  className={`px-4 py-2 border-b dark:border-black text-left text-green-500`}
-                >
-                  + {currencyFormatter.format(Math.abs(transaction.amount))}
-                </td>
-              ) : (
-                <td
-                  className={`px-4 py-2 border-b border-black text-left`}
-                ></td>
-              )}
+              <td
+                className={`px-4 py-2 border-b dark:border-black text-left font-semibold ${
+                  transaction.transactionType.toLowerCase().includes("top up")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {transaction.transactionType.toLowerCase().includes("top up") ? "+" : "-"}{" "}
+                {currencyFormatter.format(Math.abs(transaction.amount))}
+              </td>
             </tr>
           ))}
         </tbody>

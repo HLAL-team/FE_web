@@ -11,11 +11,15 @@ function AccountStats() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch("http://localhost:3000/balance");
-        if (!response.ok) throw new Error("Failed to fetch");
+        const response = await fetch("http://localhost:8080/api/auth/profile", {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Jangan lupa kalau butuh token!
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch account data");
         const data = await response.json();
         setAccount(data);
-        console.log(account);
       } catch (err) {
         alert(err.message);
       }
@@ -24,15 +28,18 @@ function AccountStats() {
     fetchAccount();
   }, []);
 
+  if (!account) {
+    return <div>Loading...</div>;}
+
   return (
     <div className="flex gap-12 px-6 sm:px-4 lg:px-8 mb-9 dark:text-white">
-      <AccountInfo accountNo={account.accountNo} />
-      <BalanceInfo balance={currencyFormatter.format(account.amount)} />
+      <AccountInfo accountNumber={account.accountNumber} />
+      <BalanceInfo balance={account.balance} />
     </div>
   );
 }
 
-const AccountInfo = ({ accountNo }) => {
+const AccountInfo = ({ accountNumber }) => {
   return (
     <div
       className="flex items-center justify-center h-56 w-72 text-white rounded-3xl p-6 bg-cover bg-center"
@@ -40,7 +47,7 @@ const AccountInfo = ({ accountNo }) => {
     >
       <div>
         <h4 className="font-normal text-xl">Account No</h4>
-        <p className="font-bold text-xl">{accountNo}</p>
+        <p className="font-bold text-xl">{accountNumber}</p>
       </div>
     </div>
   );

@@ -27,25 +27,27 @@ const ModalTopupSuccess = ({ isOpen, onClose, transferData }) => {
                         <span className="font-medium">Transaction ID:</span>
                         {topupData.idTransaksi}
                     </p> */}
-                    {/* <p className="flex justify-between">
-                        <span className="font-medium">Recipient Name:</span>
-                        {transferData.namaPenerima}
-                    </p>
-                    <p className="flex justify-between">
-                        <span className="font-medium">Account Number:</span>
-                        {transferData.noRekening}
-                    </p> */}
                     <p className="flex justify-between">
                         <span className="font-medium">Amount:</span>
-                        Rp {Number(transferData.jumlah).toLocaleString("id-ID")}
+                        <span className="font-bold">
+                            Rp {Number(transferData.jumlah).toLocaleString("id-ID")}
+                        </span>
                     </p>
                     <p className="flex justify-between">
-                        <span className="font-medium">Time:</span>
+                        <span className="font-medium">Transaction Id</span>
+                        {transferData.idTransaksi}
+                    </p>
+                    <p className="flex justify-between">
+                        <span className="font-medium">Time</span>
                         {transferData.waktu}
                     </p>
-
                     <p className="flex justify-between">
-                        <span className="font-medium">Notes:</span>
+                        <span className="font-medium">Top Up Method</span>
+                        {transferData.metode}
+                    </p>
+                    
+                    <p className="flex justify-between">
+                        <span className="font-medium">Notes</span>
                         {transferData.catatan}
                     </p>
                 </div>
@@ -68,14 +70,14 @@ const ModalTopupSuccess = ({ isOpen, onClose, transferData }) => {
                     >
                         Close
                     </button>
-                    
+
                 </div>
 
             </div>
         </div>
 
 
-        
+
 
 
     );

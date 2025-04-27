@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import {
   blockInvalidChar,
@@ -10,15 +10,62 @@ import Layout from "../components/Layout";
 import ModalTopupSuccess from "../components/ModalTopupSucess";
 
 const TopUpPage = () => {
-  const sources = ["Credit Card", "Bank Transfer"];
-  const [selectedSource, setSelectedSource] = useState(sources[0]);
+  const [transactionTypes, setTransactionTypes] = useState([]); 
+  const [selectedSource, setSelectedSource] = useState(""); 
   const [amountInput, setAmountInput] = useState("");
   const [rawAmountInput, setRawAmountInput] = useState(0);
   const [notesInput, setNotesInput] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [transferData, setTransferData] = useState(null);
-
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  // Fungsi untuk mendapatkan nama metode top up berdasarkan ID
+  const getTopUpMethodName = (id) => {
+    const method = transactionTypes.find((item) => item.id === parseInt(id));
+    return method ? method.name : "Unknown Method";
+  };
+
+  useEffect(() => {
+    const fetchTransactionTypes = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Token tidak ditemukan. Silakan login kembali.");
+          return;
+        }
+    
+        const response = await fetch("http://localhost:8080/api/transactions/topupmethod", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (!response.ok) {
+          if (response.status === 401) {
+            setErrorMessage("Unauthorized. Silakan login kembali.");
+            return;
+          }
+          setErrorMessage("Gagal mengambil data jenis transaksi.");
+          return;
+        }
+    
+        const responseData = await response.json();
+        if (Array.isArray(responseData.data)) {
+          setTransactionTypes(responseData.data);
+          setSelectedSource(responseData.data[0]?.id || "");
+        } else {
+          throw new Error("Data transaksi tidak valid.");
+        }
+      } catch (err) {
+        setErrorMessage(`Error: ${err.message}`);
+      }
+    };
+
+    fetchTransactionTypes();
+  }, []);
 
   const handleAmountInputChange = (e) => {
     const rawValue = e.target.value.replace(/[^\d]/g, "");
@@ -34,8 +81,13 @@ const TopUpPage = () => {
     setRawAmountInput(numericValue);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (rawAmountInput <= 0) {
+      alert("Harap masukkan jumlah yang valid untuk top-up.");
+      return;
+    }
 
     const now = new Date();
     const tanggal = now.toLocaleDateString("id-ID", {
@@ -49,17 +101,43 @@ const TopUpPage = () => {
       hour12: false,
     });
     const waktu = `${tanggal} ${jam}`;
-    const fakeId = "TOP-" + Date.now().toString().slice(-6).toUpperCase();
 
-    setTransferData({
-      sumberDana: selectedSource,
-      jumlah: rawAmountInput,
-      waktu,
-      idTransaksi: fakeId,
-      catatan: notesInput,
-    });
+    const transactionData = {
+      transactionTypeId: 1, 
+      amount: rawAmountInput, 
+      description: notesInput || "Tidak ada catatan",
+      topUpMethodId: selectedSource,
+    };
 
-    setModalOpen(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/transactions/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Gagal top-up: ${errorData.message || "Terjadi kesalahan pada server"}`);
+      }
+
+      const data = await response.json(); 
+
+      setTransferData({
+        metode: getTopUpMethodName(selectedSource), // DI SINI UDAH DIUBAH: ambil nama metode
+        jumlah: rawAmountInput,
+        waktu,
+        idTransaksi: data.data.transactionId,
+        catatan: notesInput,
+      });
+
+      setModalOpen(true); 
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+    }
   };
 
   return (
@@ -76,10 +154,7 @@ const TopUpPage = () => {
           <div className="mt-6 mx-auto w-full max-w-lg shadow-md bg-white dark:bg-black p-14 rounded-3xl">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="bg-gray-50 dark:bg-gray-950 px-6 py-3 rounded-2xl">
-                <label
-                  htmlFor="amount"
-                  className="block text-sm text-left font-semibold"
-                >
+                <label htmlFor="amount" className="block text-sm text-left font-semibold">
                   Amount
                 </label>
                 <div className="mt-2 relative bg-transparent">
@@ -110,21 +185,22 @@ const TopUpPage = () => {
                   onChange={(e) => setSelectedSource(e.target.value)}
                   className="pl-1 bg-gray-50 dark:bg-gray-950 rounded-r-2xl text-sm w-full focus-visible:outline-none"
                 >
-                  {sources.map((source) => (
-                    <option key={source} value={source}>
-                      {source}
-                    </option>
-                  ))}
+                  {Array.isArray(transactionTypes) && transactionTypes.length > 0 ? (
+                    transactionTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No transaction types available</option>
+                  )}
                 </select>
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-950 px-6 rounded-2xl">
                 <div className="mt-2 relative bg-transparent">
                   <div className="absolute inset-y-0 left-0 flex items-center font-semibold text-3xl">
-                    <label
-                      className="text-sm text-left font-semibold"
-                      htmlFor="notes"
-                    >
+                    <label className="text-sm text-left font-semibold" htmlFor="notes">
                       Notes:
                     </label>
                   </div>
@@ -135,7 +211,7 @@ const TopUpPage = () => {
                       type="text"
                       value={notesInput}
                       onChange={(e) => setNotesInput(e.target.value)}
-                      className="pl-14 text-sm block w-full bg-transparent px-3 py-1.5  focus-visible:outline-none"
+                      className="pl-14 text-sm block w-full bg-transparent px-3 py-1.5 focus-visible:outline-none"
                     />
                   </div>
                 </div>

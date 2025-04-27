@@ -1,12 +1,54 @@
+import React, { useEffect, useState } from 'react';
 import photo from "../assets/profile.jpg";
 
 const Hero = () => {
-  const firstName = "Bella";
-  const lastName = "Hadid";
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/auth/profile", {
+          method: "GET", 
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, 
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          setProfileData(data);
+        } else {
+          console.error("Failed to fetch profile data", data);
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!profileData) {
+    return <div>Error: Unable to fetch profile data</div>;
+  }
+
   return (
     <div className="flex justify-between px-6 sm:px-4 lg:px-8 gap-8 mb-9 dark:text-white">
-      <Greeting firstName={firstName} />
-      <Profile firstName={firstName} lastName={lastName} photo={photo} />
+      <Greeting firstName={profileData.fullname} />
+      <Profile 
+        firstName={profileData.fullname.split(" ")[0]} 
+        lastName={profileData.fullname.split(" ")[1]} 
+        photo={profileData.avatarUrl || photo} 
+      />
     </div>
   );
 };

@@ -7,12 +7,13 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem("auth") === "true";
   });
 
-  const login = (username, password) => {
-    if (username !== "admin") return false;
+  const login = (usernameOrEmail, password) => {
+    if (usernameOrEmail !== "admin") return false;
     if (password !== "admin123") return false;
 
     localStorage.setItem("auth", "true");
     setIsLoggedIn(true);
+    navigate('/Dashboard');
 
     return true;
   };
