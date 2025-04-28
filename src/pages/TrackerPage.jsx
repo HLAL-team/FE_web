@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import Navbar from "../components/Navbar";
+import Navbar from '../components/Navbar';
 import History from '../components/History';
 import BarChart from '../components/BarChart';
 
@@ -140,3 +140,4 @@ const TrackerPage = () => {
 };
 
 export default TrackerPage;
+
