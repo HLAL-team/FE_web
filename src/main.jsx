@@ -49,9 +49,9 @@ createRoot(document.getElementById("root")).render(
           <Route
             path="/tracker"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
               <TrackerPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
 
@@ -65,7 +65,7 @@ createRoot(document.getElementById("root")).render(
 
           />
                     <Route
-            path="/profile"
+            path="/account"
             element={
               // <ProtectedRoute>
               <ProfilePage />

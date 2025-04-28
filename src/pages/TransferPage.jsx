@@ -37,10 +37,10 @@ const TransferPage = () => {
         }
 
         const data = await response.json();
-        setAccounts(data.accounts || []); // Pastikan data.accounts ada
-        setBalance(data.balance); // Set balance dari response
+        setAccounts(data.accounts || []); 
+        setBalance(data.balance); 
         if (data.accounts && data.accounts.length > 0) {
-          setSelectedAccount(data.accounts[0]); // Set akun pertama jika ada
+          setSelectedAccount(data.accounts[0]); 
         }
       } catch (err) {
         alert(err.message);
@@ -48,7 +48,7 @@ const TransferPage = () => {
     };
 
     fetchProfile();
-  }, []); // Hanya dijalankan sekali saat komponen pertama kali dimuat
+  }, []); 
 
   const handleAmountInputChange = (e) => {
     const rawValue = e.target.value.replace(/[^\d]/g, "");
@@ -77,7 +77,6 @@ const TransferPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi jumlah transfer
     if (rawAmountInput <= 0 || rawAmountInput > balance) {
       alert("Jumlah transfer tidak valid");
       return;
@@ -96,14 +95,13 @@ const TransferPage = () => {
     });
     const waktu = `${tanggal} ${jam}`;
 
-    // Data untuk transaksi
     const transactionData = {
-      recipientWalletId: selectedAccount.walletId, // wallet tujuan
-      transactionTypeId: 2, // Tipe transaksi transfer
-      topUpMethodId: 1, // Sesuaikan jika ada metode pengisian ulang
-      amount: rawAmountInput, // Jumlah yang akan ditransfer
-      description: notesInput || "Transfer", // Deskripsi transaksi
-      recipient: selectedAccount.accountName, // Nama penerima
+      recipientWalletId: selectedAccount.walletId, 
+      transactionTypeId: 2, 
+      topUpMethodId: 1, 
+      amount: rawAmountInput, 
+      description: notesInput || "Transfer", 
+      recipient: selectedAccount.accountName, 
       recipientAccountNumber: selectedAccount.accountNo,
     };
 
@@ -112,7 +110,7 @@ const TransferPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Menggunakan token autentikasi
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`, 
         },
         body: JSON.stringify(transactionData),
       });
@@ -127,7 +125,7 @@ const TransferPage = () => {
         noRekening: selectedAccount.accountNo,
         jumlah: rawAmountInput,
         waktu,
-        idTransaksi: data.data.transactionId, // Menggunakan transactionId dari respons API
+        idTransaksi: data.data.transactionId, 
         catatan: notesInput,
       });
 
@@ -236,14 +234,14 @@ const TransferPage = () => {
               isOpen={modalOpen}
               onClose={() => {
                 setModalOpen(false);
-                navigate("/"); // pindah ke halaman utama setelah modal ditutup
+                navigate("/"); 
               }}
               transferData={transferData}
             />
           </div>
 
           <div className="mt-6 mx-auto w-full max-w-lg shadow-md bg-white dark:bg-black p-14 rounded-3xl">
-            <FavoriteAccountList />
+            <FavoriteAccountList onSelectAccount={handleSelectAccount} />
           </div>
         </div>
       </div>

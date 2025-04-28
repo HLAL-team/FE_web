@@ -18,7 +18,6 @@ export default function ProfileDropdown() {
     navigate("/login");
   };
 
-  // Tutup dropdown saat klik di luar
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -31,7 +30,6 @@ export default function ProfileDropdown() {
 
   return (
     <div className="relative group">
-      {/* Foto Profil (hover atau click untuk toggle) */}
       <button
         onClick={() => setOpen(!open)}
         className= "flex items-center gap-1 focus:outline-none"
@@ -45,7 +43,6 @@ export default function ProfileDropdown() {
         <ChevronDownIcon className="w-4 h-4 text-gray-500" />
       </button>
 
-      {/* Dropdown Menu */}
       <div
         ref={menuRef}
         className={`${
@@ -54,7 +51,7 @@ export default function ProfileDropdown() {
       >
         <ul className="py-2 text-gray-700">
           <li>
-            <a href="#account" className="block px-4 py-2 hover:bg-gray-100">
+            <a href="account" className="block px-4 py-2 hover:bg-gray-100">
               My Account
             </a>
           </li>

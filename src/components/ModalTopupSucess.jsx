@@ -23,10 +23,6 @@ const ModalTopupSuccess = ({ isOpen, onClose, transferData }) => {
                 <br></br>
 
                 <div className="space-y-2 text-sm text-gray-700">
-                    {/* <p className="flex justify-between">
-                        <span className="font-medium">Transaction ID:</span>
-                        {topupData.idTransaksi}
-                    </p> */}
                     <p className="flex justify-between">
                         <span className="font-medium">Amount:</span>
                         <span className="font-bold">
@@ -45,14 +41,12 @@ const ModalTopupSuccess = ({ isOpen, onClose, transferData }) => {
                         <span className="font-medium">Top Up Method</span>
                         {transferData.metode}
                     </p>
-                    
+
                     <p className="flex justify-between">
                         <span className="font-medium">Notes</span>
                         {transferData.catatan}
                     </p>
                 </div>
-
-
 
                 <br></br> <br></br>
 
@@ -70,16 +64,9 @@ const ModalTopupSuccess = ({ isOpen, onClose, transferData }) => {
                     >
                         Close
                     </button>
-
                 </div>
-
             </div>
         </div>
-
-
-
-
-
     );
 };
 

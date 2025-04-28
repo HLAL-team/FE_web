@@ -65,7 +65,7 @@ const TransactionList = () => {
         const response = await fetch("http://localhost:8080/api/transactions", {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Kirim token di header Authorization
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, 
             "Content-Type": "application/json",
           },
         });
@@ -73,7 +73,7 @@ const TransactionList = () => {
         if (!response.ok) throw new Error("Data tidak ditemukan");
 
         const data = await response.json();
-        setTransactions(data.data); // Sesuaikan data dengan format yang diterima dari API (data.data)
+        setTransactions(data.data); 
       } catch (err) {
         alert(err.message);
       }

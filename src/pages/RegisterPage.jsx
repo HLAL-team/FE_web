@@ -46,7 +46,6 @@ const RegisterPage = () => {
 
       if (response.ok && data.status === "Success") {
         alert(data.message || "Berhasil mendaftar!");
-        // navigate("/login");
       } else {
         alert(data.message || "Gagal mendaftar. Silakan coba lagi.");
       }
@@ -58,9 +57,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex min-h-screen overflow-hidden dark:text-white">
-      {/* Kiri - Form */}
       <div className="flex flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
-        {/* Theme Toggle */}
         <button
           className="h-7 w-7 relative overflow-hidden flex items-center justify-center mb-9"
           onClick={toggleTheme}
@@ -89,12 +86,11 @@ const RegisterPage = () => {
           <img src={Logo} alt="HLAL" className="mx-auto h-10 w-auto" />
         </div>
 
-        {/* Formulir */}
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleRegister}>
             <input
               type="text"
-              placeholder="Nama Lengkap"
+              placeholder="Full Name"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -130,7 +126,7 @@ const RegisterPage = () => {
 
             <input
               type="text"
-              placeholder="No HP"
+              placeholder="Phone Number"
               required
               maxLength={12}
               value={phoneNumber}
@@ -141,14 +137,14 @@ const RegisterPage = () => {
               className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
             />
 
-            <input
+            {/* <input
               type="file"
               accept="image/*"
               onChange={(e) => setAvatar(e.target.files[0])}
               className="block w-full text-sm text-gray-500"
-            />
+            /> */}
 
-            <label className="flex items-start gap-2 text-sm text-gray-500 dark:text-gray-300">
+            <label className="flex items-start gap-2 text-sm text-gray-500 dark:text-gray-300 text-left">
               <input
                 type="checkbox"
                 className="mt-1.5 accent-primary"
@@ -183,15 +179,14 @@ const RegisterPage = () => {
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500 dark:text-gray-300">
-            Sudah punya akun?{" "}
+            Already have an account?{" "}
             <NavLink to="/login" className="font-semibold text-primary">
-              Login di sini
+              Login here
             </NavLink>
           </p>
         </div>
       </div>
 
-      {/* Kanan - Banner */}
       <div className="hidden lg:block w-1/2">
         <img
           className="h-full object-cover"

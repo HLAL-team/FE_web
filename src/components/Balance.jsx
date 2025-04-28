@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import photo from "../assets/profile.jpg";
 
 const Hero = () => {
   const [profileData, setProfileData] = useState(null);
@@ -47,11 +46,12 @@ const Hero = () => {
       <Profile 
         firstName={profileData.fullname.split(" ")[0]} 
         lastName={profileData.fullname.split(" ")[1]} 
-        photo={profileData.avatarUrl || photo} 
+        photo={profileData.avatarUrl} 
       />
     </div>
   );
 };
+
 
 const Greeting = ({ firstName }) => {
   return (
@@ -67,6 +67,10 @@ const Greeting = ({ firstName }) => {
 };
 
 const Profile = ({ firstName, lastName, photo }) => {
+  const imageUrl = `http://localhost:8080${photo}`;
+  
+  console.log(imageUrl); 
+
   return (
     <div className="flex items-center gap-6 py-8">
       <div className="text-right">
@@ -76,7 +80,7 @@ const Profile = ({ firstName, lastName, photo }) => {
       <div className="flex justify-center items-center">
         <img
           className="max-h-24 max-w-24 border-4 rounded-full border-solid border-primary"
-          src={photo}
+          src={imageUrl} 
           alt={`${firstName} ${lastName}`}
         />
       </div>

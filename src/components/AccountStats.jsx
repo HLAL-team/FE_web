@@ -13,7 +13,7 @@ function AccountStats() {
       try {
         const response = await fetch("http://localhost:8080/api/auth/profile", {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Jangan lupa kalau butuh token!
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
             "Content-Type": "application/json",
           },
         });
@@ -29,7 +29,8 @@ function AccountStats() {
   }, []);
 
   if (!account) {
-    return <div>Loading...</div>;}
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex gap-12 px-6 sm:px-4 lg:px-8 mb-9 dark:text-white">
@@ -88,16 +89,18 @@ const BalanceInfo = ({ balance }) => {
           </div>
           <div className="flex justify-end gap-2">
             <button
-              className="p-1 bg-teal-600 text-white dark:text-black rounded-xl"
+              className="p-1 text-primary dark:text-black rounded-xl"
+              style={{ backgroundColor: '#F5FEF0' }}
               onClick={() => navigate("topup")}
             >
-              <Plus size={32} />
+              <Plus size={40} />
             </button>
             <button
-              className="p-1 bg-teal-600 text-white dark:text-black rounded-xl"
+              className="p-1 text-primary dark:text-black rounded-xl"
+              style={{ backgroundColor: '#ECFFF7' }}
               onClick={() => navigate("transfer")}
             >
-              <Send size={32} />
+              <Send size={36} />
             </button>
           </div>
         </div>

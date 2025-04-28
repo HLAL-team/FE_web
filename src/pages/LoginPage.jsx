@@ -27,11 +27,11 @@ const LoginPage = () => {
         }),
       });
 
-      const text = await response.text();  // Ambil response sebagai text terlebih dahulu
+      const text = await response.text();
 
       let data = {};
       try {
-        data = JSON.parse(text);  // Parsing response ke JSON
+        data = JSON.parse(text);
       } catch {
         console.error("Response bukan JSON:", text);
         alert("Terjadi kesalahan saat login.");
@@ -91,15 +91,12 @@ const LoginPage = () => {
             <div>
               <div className="mt-2">
                 <input
-                  // id="username"
                   id="usernameOrEmail"
-                  // name="username"
                   name="usernameOrEmail"
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
                   type="text"
                   required
                   value={usernameOrEmail}
-                  // placeholder="Username"
                   placeholder="Username or Email"
                   className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
                 />

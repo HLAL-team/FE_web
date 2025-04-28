@@ -10,8 +10,8 @@ import Layout from "../components/Layout";
 import ModalTopupSuccess from "../components/ModalTopupSucess";
 
 const TopUpPage = () => {
-  const [transactionTypes, setTransactionTypes] = useState([]); 
-  const [selectedSource, setSelectedSource] = useState(""); 
+  const [transactionTypes, setTransactionTypes] = useState([]);
+  const [selectedSource, setSelectedSource] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [rawAmountInput, setRawAmountInput] = useState(0);
   const [notesInput, setNotesInput] = useState("");
@@ -20,7 +20,6 @@ const TopUpPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  // Fungsi untuk mendapatkan nama metode top up berdasarkan ID
   const getTopUpMethodName = (id) => {
     const method = transactionTypes.find((item) => item.id === parseInt(id));
     return method ? method.name : "Unknown Method";
@@ -34,7 +33,7 @@ const TopUpPage = () => {
           setErrorMessage("Token tidak ditemukan. Silakan login kembali.");
           return;
         }
-    
+
         const response = await fetch("http://localhost:8080/api/transactions/topupmethod", {
           method: "GET",
           headers: {
@@ -42,7 +41,7 @@ const TopUpPage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-    
+
         if (!response.ok) {
           if (response.status === 401) {
             setErrorMessage("Unauthorized. Silakan login kembali.");
@@ -51,7 +50,7 @@ const TopUpPage = () => {
           setErrorMessage("Gagal mengambil data jenis transaksi.");
           return;
         }
-    
+
         const responseData = await response.json();
         if (Array.isArray(responseData.data)) {
           setTransactionTypes(responseData.data);
@@ -103,8 +102,8 @@ const TopUpPage = () => {
     const waktu = `${tanggal} ${jam}`;
 
     const transactionData = {
-      transactionTypeId: 1, 
-      amount: rawAmountInput, 
+      transactionTypeId: 1,
+      amount: rawAmountInput,
       description: notesInput || "Tidak ada catatan",
       topUpMethodId: selectedSource,
     };
@@ -124,17 +123,17 @@ const TopUpPage = () => {
         throw new Error(`Gagal top-up: ${errorData.message || "Terjadi kesalahan pada server"}`);
       }
 
-      const data = await response.json(); 
+      const data = await response.json();
 
       setTransferData({
-        metode: getTopUpMethodName(selectedSource), // DI SINI UDAH DIUBAH: ambil nama metode
+        metode: getTopUpMethodName(selectedSource),
         jumlah: rawAmountInput,
         waktu,
         idTransaksi: data.data.transactionId,
         catatan: notesInput,
       });
 
-      setModalOpen(true); 
+      setModalOpen(true);
     } catch (err) {
       alert(`Error: ${err.message}`);
     }

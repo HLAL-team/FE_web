@@ -1,30 +1,62 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Layout from "../components/Layout";
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState({
-    fullName: "Chelsea Islan",
-    username: "Chelsea",
-    email: "chelseaism@gmail.com",
-    phone: "085607485253",
+    fullName: "",
+    username: "",
+    email: "",
+    phone: "",
     newPassword: "",
     profileImage: "",
-    isEditingUsername: false, 
+    isEditingUsername: false,
   });
 
   const fileInputRef = useRef(null);
   const usernameInputRef = useRef(null);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); 
+  
+        if (!token) {
+          alert("You need to be logged in to access this page.");
+          return; 
+        }
+  
+        const response = await fetch('http://localhost:8080/api/auth/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`, 
+          },
+        });
+  
+        if (!response.ok) throw new Error("Failed to fetch profile");
+  
+        const data = await response.json();
+        setProfileData(prev => ({
+          ...prev,
+          fullName: data.fullname || "",
+          username: data.username || "",
+          email: data.email || "",
+          phone: data.phoneNumber || "",
+          profileImage: data.avatarUrl || "",
+        }));
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        alert("Failed to load profile");
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted data:", profileData);
-    alert("Profile updated successfully!");
   };
 
   const handleEditProfilePic = () => {
@@ -39,11 +71,54 @@ const ProfilePage = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const token = localStorage.getItem('authToken'); 
+      if (!token) {
+        alert("You need to be logged in to update your profile.");
+        return;
+      }
+  
+      const formData = new FormData();
+      
+      if (profileData.profileImage instanceof File) {
+        formData.append("avatarUrl", profileData.profileImage); 
+      }
+  
+      const response = await fetch('http://localhost:8080/api/auth/edit-profile', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData, 
+      });
+  
+      if (!response.ok) throw new Error("Failed to update profile");
+  
+      const data = await response.json();
+      console.log("Profile updated successfully:", data);
+  
+      setProfileData(prev => ({
+        ...prev,
+        profileImage: data.avatarUrl || prev.profileImage, 
+      }));
+      
+      alert("Profile updated successfully!");
+  
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile");
+    }
+  };
+  
   return (
     <Layout>
       <div className="dark:text-white">
         <Navbar />
         <div className="flex items-start mb-8">
+          {/* Profile Sidebar */}
           <div className="basis-1/5 flex flex-col items-center mt-12 relative">
             <div className="relative">
               <img
@@ -100,20 +175,24 @@ const ProfilePage = () => {
             </div>
           </div>
 
+          {/* Profile Form */}
           <div className="basis-4/5 flex flex-col items-start justify-start px-6 py-6">
             <div className="w-full max-w-5xl bg-white dark:bg-black rounded-2xl shadow-md p-10">
               <form onSubmit={handleSubmit} className="space-y-6 w-full text-left">
+                
+                {/* Full Name */}
                 <div>
                   <label className="block text-sm font-bold mb-1">Full Name</label>
                   <input
                     type="text"
                     name="fullName"
                     value={profileData.fullName}
-                    disabled
-                    className="w-full rounded-xl border px-4 py-2 bg-gray-100 dark:bg-gray-950 cursor-not-allowed"
+                    onChange={handleChange}
+                    className="w-full rounded-xl border px-4 py-2 bg-white dark:bg-gray-800"
                   />
                 </div>
 
+                {/* Email */}
                 <div>
                   <label className="block text-sm font-bold mb-1">Email</label>
                   <input
@@ -125,6 +204,7 @@ const ProfilePage = () => {
                   />
                 </div>
 
+                {/* Phone */}
                 <div>
                   <label className="block text-sm font-bold mb-1">Phone Number</label>
                   <input
@@ -136,14 +216,13 @@ const ProfilePage = () => {
                   />
                 </div>
 
-
+                {/* New Password */}
                 <div className="flex items-center justify-between">
                   <div className="w-full">
-                  <div className="flex items-center">
-                    <label className="block text-sm font-bold mb-1 mr-2">New Password</label>
-                    <img src="./src/assets/pena_edit.png" alt="Edit" className="w-4 h-4" />
-                  </div>
-
+                    <div className="flex items-center">
+                      <label className="block text-sm font-bold mb-1 mr-2">New Password</label>
+                      <img src="./src/assets/pena_edit.png" alt="Edit" className="w-4 h-4" />
+                    </div>
                     <input
                       type="password"
                       name="newPassword"
@@ -154,12 +233,14 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   className="bg-primary text-white dark:text-black py-2 px-4 w-full rounded-xl font-semibold hover:shadow-inner hover:drop-shadow-none drop-shadow-xl"
                 >
                   Submit Changes
                 </button>
+
               </form>
             </div>
           </div>
