@@ -156,7 +156,7 @@ const LoginPage = () => {
             <p className="p-8 text-center text-lg text-gray-800 dark:text-gray-100">{modalMessage}</p>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 w-full border bg-primary dark:text-black py-2 px-4 rounded hover:opacity-90"
+              className="mt-4 w-full border bg-primary text-white py-2 px-4 rounded hover:opacity-90"
             >
               close
             </button>

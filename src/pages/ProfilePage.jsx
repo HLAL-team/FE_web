@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Layout from "../components/Layout";
+import ModalAlert from "../components/ModalAlert";
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState({
@@ -16,25 +17,30 @@ const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const usernameInputRef = useRef(null);
 
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('authToken'); 
-  
+        const token = localStorage.getItem('authToken');
+
         if (!token) {
-          alert("You need to be logged in to access this page.");
-          return; 
+          setModalMessage("You need to be logged in to access this page.");
+          setIsModalOpen(true);
+          return;
         }
-  
+
         const response = await fetch('http://localhost:8080/api/auth/profile', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`, 
+            'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (!response.ok) throw new Error("Failed to fetch profile");
-  
+
         const data = await response.json();
         setProfileData(prev => ({
           ...prev,
@@ -46,13 +52,14 @@ const ProfilePage = () => {
         }));
       } catch (error) {
         console.error('Error fetching profile:', error);
-        alert("Failed to load profile");
-      }
+        setModalMessage("Profile updated successfully!");
+        setIsModalOpen(true);
+              }
     };
-  
+
     fetchProfile();
   }, []);
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,46 +80,49 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const token = localStorage.getItem('authToken'); 
+      const token = localStorage.getItem('authToken');
       if (!token) {
-        alert("You need to be logged in to update your profile.");
+        setModalMessage("You need to be logged in to update your profile.");
+        setIsModalOpen(true);
         return;
       }
-  
+
       const formData = new FormData();
-      
+
       if (profileData.profileImage instanceof File) {
-        formData.append("avatarUrl", profileData.profileImage); 
+        formData.append("avatarUrl", profileData.profileImage);
       }
-  
+
       const response = await fetch('http://localhost:8080/api/auth/edit-profile', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
         },
-        body: formData, 
+        body: formData,
       });
-  
+
       if (!response.ok) throw new Error("Failed to update profile");
-  
+
       const data = await response.json();
       console.log("Profile updated successfully:", data);
-  
+
       setProfileData(prev => ({
         ...prev,
-        profileImage: data.avatarUrl || prev.profileImage, 
+        profileImage: data.avatarUrl || prev.profileImage,
       }));
-      
-      alert("Profile updated successfully!");
-  
+
+      setModalMessage("Profile updated successfully!");
+      setIsModalOpen(true);
+
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile");
+      setModalMessage("Failed to update profile");
+      setIsModalOpen(true)
     }
   };
-  
+
   return (
     <Layout>
       <div className="dark:text-white">
@@ -177,7 +187,7 @@ const ProfilePage = () => {
           <div className="basis-4/5 flex flex-col items-start justify-start px-6 py-6">
             <div className="w-full max-w-5xl bg-white dark:bg-black rounded-2xl shadow-md p-10">
               <form onSubmit={handleSubmit} className="space-y-6 w-full text-left">
-                
+
                 <div>
                   <label className="block text-sm font-bold mb-1">Full Name</label>
                   <input
@@ -238,6 +248,13 @@ const ProfilePage = () => {
                 </button>
 
               </form>
+
+              <ModalAlert
+                open={isModalOpen}
+                message={modalMessage}
+                onClose={() => setIsModalOpen(false)}
+              />
+
             </div>
           </div>
         </div>
