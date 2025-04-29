@@ -10,8 +10,12 @@ const LoginPage = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,42 +26,49 @@ const LoginPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          usernameOrEmail: usernameOrEmail,
-          password: password,
+          usernameOrEmail,
+          password,
         }),
       });
 
       const text = await response.text();
-
       let data = {};
+
       try {
         data = JSON.parse(text);
       } catch {
         console.error("Response bukan JSON:", text);
-        alert("Terjadi kesalahan saat login.");
+        setModalMessage("Terjadi kesalahan saat login.");
+        setIsModalOpen(true);
         return;
       }
 
       if (response.ok && data.status === "Success") {
-        alert(data.message || "Berhasil Login!");
-
         localStorage.setItem("authToken", data.token);
 
-        const loginSuccess = login(usernameOrEmail, password); // hanya 2 argumen
-
+        const loginSuccess = login(usernameOrEmail, password);
         if (loginSuccess) {
-          navigate("/"); // pindah ke halaman utama
+          setModalMessage(data.message);
+          setIsModalOpen(true);
+
+          setTimeout(() => {
+            setIsModalOpen(false);
+            navigate("/");
+          }, 1500);
         } else {
-          alert("Autentikasi gagal.");
+          setModalMessage("Failed Authentication");
+          setIsModalOpen(true);
         }
+      } else {
+        setModalMessage(data.message);
+        setIsModalOpen(true);
       }
     } catch (error) {
       console.error("Error saat Login:", error);
-      alert("Terjadi kesalahan saat Login: " + error.message);
+      setModalMessage("Terjadi kesalahan saat Login: " + error.message);
+      setIsModalOpen(true);
     }
   };
-
-  const { isDark, toggleTheme } = useTheme();
 
   return (
     <div className="flex min-h-screen overflow-hidden dark:text-white">
@@ -67,65 +78,59 @@ const LoginPage = () => {
           onClick={toggleTheme}
         >
           <div
-            className={`absolute transition-transform duration-300 ${
-              isDark
+            className={`absolute transition-transform duration-300 ${isDark
                 ? "transform translate-y-0 opacity-100"
                 : "transform translate-y-full opacity-0"
-            }`}
+              }`}
           >
-            <Moon key="moon" color="#F8AB39" size={28} />
+            <Moon color="#F8AB39" size={28} />
           </div>
           <div
-            className={`absolute transition-transform duration-300 ${
-              isDark
+            className={`absolute transition-transform duration-300 ${isDark
                 ? "transform -translate-y-full opacity-0"
                 : "transform translate-y-0 opacity-100"
-            }`}
+              }`}
           >
-            <Sun key="sun" color="#F8AB39" size={28} />
+            <Sun color="#F8AB39" size={28} />
           </div>
         </button>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img alt="Walled" src={hlalLogo} className="mx-auto h-10 w-auto" />
+          <img alt="hlal" src={hlalLogo} className="mx-auto h-10 w-auto" />
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
-              <div className="mt-2">
-                <input
-                  id="usernameOrEmail"
-                  name="usernameOrEmail"
-                  onChange={(e) => setUsernameOrEmail(e.target.value)}
-                  type="text"
-                  required
-                  value={usernameOrEmail}
-                  placeholder="Username or Email"
-                  className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
-                />
-              </div>
+              <input
+                id="usernameOrEmail"
+                name="usernameOrEmail"
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                type="text"
+                required
+                value={usernameOrEmail}
+                placeholder="Username or Email"
+                className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
             </div>
 
             <div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  type="password"
-                  placeholder="Password"
-                  required
-                  value={password}
-                  className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                required
+                value={password}
+                placeholder="Password"
+                className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
             </div>
 
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text- font-semibold text-white dark:text-black drop-shadow-xl hover:drop-shadow-none hover:shadow-inner"
+                className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 font-semibold text-white dark:text-black drop-shadow-xl hover:drop-shadow-none hover:shadow-inner"
               >
                 Login
               </button>
@@ -141,9 +146,23 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <div className="w-1/2">
+      <div className="w-1/2 hidden lg:block">
         <img className="h-full object-cover" src={authBanner} alt="" />
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <p className="p-8 text-center text-lg text-gray-800 dark:text-gray-100">{modalMessage}</p>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-4 w-full border bg-primary dark:text-black py-2 px-4 rounded hover:opacity-90"
+            >
+              close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

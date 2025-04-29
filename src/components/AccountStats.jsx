@@ -43,7 +43,7 @@ function AccountStats() {
 const AccountInfo = ({ accountNumber }) => {
   return (
     <div
-      className="flex items-center justify-center h-56 w-72 text-white rounded-3xl p-6 bg-cover bg-center"
+      className="flex items-center justify-center h-56 w-72 text-white rounded-3xl bg-cover bg-center"
       style={{ backgroundImage: `url(${bgHero})` }}
     >
       <div>

@@ -143,22 +143,43 @@ const TopUpPage = () => {
     <Layout>
       <div className="dark:text-white">
         <Navbar />
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="mx-auto w-full max-w-lg">
-            <h2 className="mt-10 text-left text-2xl/9 font-bold tracking-tight">
-              Top Up
-            </h2>
-          </div>
+        <h2 className="mx-8 text-4xl text-left font-bold">Top Up</h2>
+
+        <div className="flex min-h-full flex-1 flex-col justify-center px-6 mb-6 lg:px-8">
+          
+          
 
           <div className="mt-6 mx-auto w-full max-w-lg shadow-md bg-white dark:bg-black p-14 rounded-3xl">
+
+          <div className="flex bg-gray-50 dark:bg-gray-950 shadow-sm ">
+                <label className="py-3 px-4 rounded-xl bg-gray-200 dark:bg-gray-800 font-bold">
+                  From
+                </label>
+                <select
+                  value={selectedSource}
+                  onChange={(e) => setSelectedSource(e.target.value)}
+                  className="pl-1 bg-gray-50 dark:bg-gray-950 text-sm w-full focus-visible:outline-none"
+                >
+                  {Array.isArray(transactionTypes) && transactionTypes.length > 0 ? (
+                    transactionTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No transaction types available</option>
+                  )}
+                </select>
+              </div>
+
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="bg-gray-50 dark:bg-gray-950 px-6 py-3 rounded-2xl">
+              <div className="bg-gray-50 dark:bg-gray-950 py-4 rounded-2xl">
                 <label htmlFor="amount" className="block text-sm text-left font-semibold">
                   Amount
                 </label>
                 <div className="mt-2 relative bg-transparent">
                   <div className="absolute inset-y-0 left-0 flex items-center font-semibold text-3xl">
-                    <p>IDR</p>
+                    <p>Rp</p>
                   </div>
                   <div>
                     <input
@@ -175,46 +196,58 @@ const TopUpPage = () => {
                 </div>
               </div>
 
-              <div className="flex bg-gray-50 dark:bg-gray-950 shadow-sm rounded-2xl pr-2">
-                <label className="py-3 px-8 rounded-2xl bg-gray-200 dark:bg-gray-800 font-bold">
-                  From
-                </label>
-                <select
-                  value={selectedSource}
-                  onChange={(e) => setSelectedSource(e.target.value)}
-                  className="pl-1 bg-gray-50 dark:bg-gray-950 rounded-r-2xl text-sm w-full focus-visible:outline-none"
-                >
-                  {Array.isArray(transactionTypes) && transactionTypes.length > 0 ? (
-                    transactionTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
-                      </option>
-                    ))
-                  ) : (
-                    <option disabled>No transaction types available</option>
-                  )}
-                </select>
-              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+  <div className="flex flex-col gap-2">
+    {[10000, 20000, 50000].map((val) => (
+      <button
+        key={val}
+        type="button"
+        onClick={() => {
+          setAmountInput(inputCurrencyFormatter.format(val));
+          setRawAmountInput(val);
+        }}
+        className="bg-gray-200 dark:bg-gray-800 text-sm py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+      >
+        {inputCurrencyFormatter.format(val)}
+      </button>
+    ))}
+  </div>
+  <div className="flex flex-col gap-2">
+    {[100000, 200000, 500000].map((val) => (
+      <button
+        key={val}
+        type="button"
+        onClick={() => {
+          setAmountInput(inputCurrencyFormatter.format(val));
+          setRawAmountInput(val);
+        }}
+        className="bg-gray-200 dark:bg-gray-800 text-sm py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+      >
+        {inputCurrencyFormatter.format(val)}
+      </button>
+    ))}
+  </div>
+</div>
 
-              <div className="bg-gray-50 dark:bg-gray-950 px-6 rounded-2xl">
-                <div className="mt-2 relative bg-transparent">
-                  <div className="absolute inset-y-0 left-0 flex items-center font-semibold text-3xl">
-                    <label className="text-sm text-left font-semibold" htmlFor="notes">
-                      Notes:
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      id="notes"
-                      name="notes"
-                      type="text"
-                      value={notesInput}
-                      onChange={(e) => setNotesInput(e.target.value)}
-                      className="pl-14 text-sm block w-full bg-transparent px-3 py-1.5 focus-visible:outline-none"
-                    />
+
+              <div className="bg-gray-50 dark:bg-gray-950  rounded-2xl text-left">
+                  <label className="text-sm font-semibold" htmlFor="notes">
+                    Notes
+                  </label>
+                  <div className="mt-2 relative bg-transparent">
+                    <div>
+                      <input
+                        id="notes"
+                        name="notes"
+                        type="text"
+                        placeholder="Optional"
+                        value={notesInput}
+                        onChange={(e) => setNotesInput(e.target.value)}
+                        className="text-sm block w-full bg-gray-100 px-3 py-4 focus:outline-none"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
               <div>
                 <button

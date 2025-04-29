@@ -5,6 +5,8 @@ import Logo from "/hlal-logo.svg";
 import authBanner from "../assets/auth-banner.png";
 import { useTheme } from "../contexts/ThemeContext";
 import ModalTnC from "../components/ModalTnC";
+import ModalAlert from "../components/ModalAlert";
+
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState("");
@@ -14,6 +16,9 @@ const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+const [showAlert, setShowAlert] = useState(false);
+
 
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
@@ -45,10 +50,14 @@ const RegisterPage = () => {
       const data = await response.json();
 
       if (response.ok && data.status === "Success") {
-        alert(data.message || "Berhasil mendaftar!");
+        setAlertMessage(data.message );
+        setShowAlert(true);
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        alert(data.message || "Gagal mendaftar. Silakan coba lagi.");
+        setAlertMessage(data.message );
+        setShowAlert(true);
       }
+      
     } catch (error) {
       console.error("Error saat mendaftar:", error);
       alert("Terjadi kesalahan saat mendaftar: " + error.message);
@@ -94,8 +103,8 @@ const RegisterPage = () => {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
-            />
+              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
 
             <input
               type="text"
@@ -103,8 +112,8 @@ const RegisterPage = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
-            />
+              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
 
             <input
               type="email"
@@ -112,8 +121,8 @@ const RegisterPage = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
-            />
+              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
 
             <input
               type="password"
@@ -121,8 +130,8 @@ const RegisterPage = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
-            />
+              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
 
             <input
               type="text"
@@ -134,15 +143,9 @@ const RegisterPage = () => {
                 if (/^\d*$/.test(e.target.value))
                   setPhoneNumber(e.target.value);
               }}
-              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1"
-            />
+              className="block w-full rounded-md bg-white dark:bg-black px-3 py-1.5 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-500 placeholder:text-gray-400"
+              />
 
-            {/* <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setAvatar(e.target.files[0])}
-              className="block w-full text-sm text-gray-500"
-            /> */}
 
             <label className="flex items-start gap-2 text-sm text-gray-500 dark:text-gray-300 text-left">
               <input
@@ -194,6 +197,12 @@ const RegisterPage = () => {
           alt="Auth Visual"
         />
       </div>
+      <ModalAlert
+  isOpen={showAlert}
+  message={alertMessage}
+  onClose={() => setShowAlert(false)}
+/>
+
     </div>
   );
 };

@@ -83,7 +83,7 @@ const TransferPage = () => {
       setAccountCheckResult(null);
       setIsFavorite(false);
       setFavoriteId(null);
-      alert("Masukkan nomor rekening terlebih dahulu.");
+      alert("PLease enter the recipient account number");
       return;
     }
 
@@ -149,7 +149,7 @@ const TransferPage = () => {
       alert("Nomor rekening tidak valid!");
       return;
     }
-  
+
     try {
       const response = await fetch("http://localhost:8080/api/transactions/favorite", {
         method: "POST",
@@ -161,12 +161,12 @@ const TransferPage = () => {
           favoriteAccountNumber: accountNo,
         }),
       });
-  
+
       const data = await response.json();
       if (data.status && data.data) {
         setIsFavorite(true);
         setFavoriteId(data.data.id);
-        setFavoriteAccounts((prev) => [...prev, data.data]); 
+        setFavoriteAccounts((prev) => [...prev, data.data]);
       } else {
         alert("Gagal menambahkan ke favorit");
       }
@@ -174,13 +174,13 @@ const TransferPage = () => {
       alert("Terjadi kesalahan: " + err.message);
     }
   };
-  
-  
+
+
 
   const handleRemoveFavorite = async () => {
     const accountNo = selectedAccount?.accountNo?.toString();
     if (!accountNo) return;
-  
+
     setIsFavoriteLoading(true);
     try {
       const response = await fetch(`http://localhost:8080/api/transactions/favorite?favoriteAccountNumber=${accountNo}`, {
@@ -189,11 +189,11 @@ const TransferPage = () => {
           "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Gagal menghapus favorite");
       }
-  
+
       setIsFavorite(false);
       setFavoriteId(null);
       setFavoriteAccounts((prev) => prev.filter((fav) => fav.accountNumber !== accountNo));
@@ -203,7 +203,7 @@ const TransferPage = () => {
       setIsFavoriteLoading(false);
     }
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -263,20 +263,18 @@ const TransferPage = () => {
     <Layout>
       <div className="dark:text-white">
         <Navbar />
-        <h2 className="mt-10 pl-8 text-left text-3xl/9 font-bold tracking-tight">
-          Transfer
-        </h2>
+        <h2 className="mx-8 text-4xl text-left font-bold">Transfer</h2>
 
-        <div className="flex min-h-full flex-1 flex-row justify-center px-6 py-12 lg:px-8">
+        <div className="flex min-h-full flex-1 flex-row justify-center px-6 py-4 lg:px-8 mb-10">
           <div className="mx-auto w-full max-w-lg">
             <div className="mt-6 mx-auto w-full max-w-lg shadow-md bg-white dark:bg-black p-14 rounded-3xl">
               <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="flex bg-gray-50 dark:bg-gray-950 shadow-sm rounded-2xl pr-2">
-                  <label className="py-3 px-8 rounded-2xl bg-gray-200 dark:bg-gray-800 font-bold text-lg flex items-center">
+                <div className="flex bg-gray-50 dark:bg-gray-950 shadow-sm rounded-2xl">
+                  <label className="px-5 rounded-lg bg-gray-200 dark:bg-gray-800 font-bold text-lg flex items-center w-fit">
                     To
                   </label>
 
-                  <div className="flex-1 bg-gray-50 dark:bg-gray-950 shadow-sm rounded-2xl px-6 py-2">
+                  <div className="flex-1 bg-gray-50 dark:bg-gray-950 shadow-sm rounded-xl px-2 py-2">
                     <div className="flex gap-2 items-center">
                       <input
                         type="text"
@@ -284,14 +282,14 @@ const TransferPage = () => {
                         pattern="[0-9]*"
                         value={selectedAccount ? selectedAccount.accountNo : ""}
                         onChange={(e) => handleSelectAccount(e.target.value)}
-                        placeholder="Masukkan nomor rekening"
+                        placeholder="Enter recipient account number"
                         className="w-full px-2 py-2 rounded-xl border dark:bg-black bg-white dark:border-white border-gray-300 focus:outline-none"
                       />
                       <button
                         type="button"
                         onClick={handleCheckAccount}
                         disabled={isCheckingAccount}
-                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 bg-primary hover: text-white font-bold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isCheckingAccount ? (
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -300,73 +298,73 @@ const TransferPage = () => {
                         )}
                       </button>
                     </div>
-
-                    <div className="flex items-center justify-between mt-2 px-2">
-                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                        {accountCheckResult ? accountCheckResult : " "}
-                      </span>
-                      {accountCheckResult && (
-                        <button
-                          type="button"
-                          onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
-                          disabled={isFavoriteLoading}
-                          className="text-yellow-500 hover:text-yellow-600 text-xl transition duration-200 ease-in-out"
-                          title={isFavorite ? "Remove from Favorite" : "Add to Favorite"}
-                        >
-                          {isFavoriteLoading ? (
-                            <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                          ) : (
-                            isFavorite ? "★" : "☆"
-                          )}
-                        </button>
-                      )}
-                    </div>
                   </div>
                 </div>
+                <div className="flex items-center justify-between border text-sm py-2 rounded-lg">
+                  <span className="text-l font-semibold text-gray-600 dark:text-gray-400 p-2">
+                    {accountCheckResult ? accountCheckResult : " "}
+                  </span>
+                  {accountCheckResult && (
+                    <button
+                      type="button"
+                      onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
+                      disabled={isFavoriteLoading}
+                      className="text-yellow-500 hover:text-yellow-600 text-3xl px-2 transition duration-200 ease-in-out"
+                      title={isFavorite ? "Remove from Favorite" : "Add to Favorite"}
+                    >
+                      {isFavoriteLoading ? (
+                        <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        isFavorite ? "★" : "☆"
+                      )}
+                    </button>
+                  )}
+                </div>
 
-                <div className="bg-gray-50 dark:bg-gray-950 px-6 py-3 rounded-2xl">
-                  <label htmlFor="amount" className="block text-sm text-left font-semibold">
+                <div className="bg-gray-50 dark:bg-gray-950 rounded-2xl">
+                  <label htmlFor="amount" className="block text-left font-semibold">
                     Amount
                   </label>
                   <div className="mt-2 relative bg-transparent">
-                    <div className="absolute inset-y-0 left-0 flex items-center font-semibold text-3xl">
-                      <p>IDR</p>
+                    <div className="absolute inset-y-0 left-0 flex items-center text-3xl">
+                      <p>Rp</p>
                     </div>
                     <div>
                       <input
                         id="amount"
                         name="amount"
+                        placeholder="Enter amount"
                         type="text"
                         value={amountInput}
                         onChange={handleAmountInputChange}
                         onKeyDown={blockInvalidChar}
                         required
-                        className="pl-14 text-3xl font-semibold block w-full bg-transparent px-3 py-1.5 border-b border-black dark:border-white focus:outline-none"
+                        className="pl-14 text-2xl block w-full bg-transparent px-3 py-1.5 border-b border-black dark:border-white focus:outline-none"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-1 text-left">
-                  <p>Balance:</p>
-                  <p className="text-green-600">{`IDR ${currencyFormatter.format(balance)}`}</p>
+                <div className="flex justify-between font-semibold">
+                  <p>Balance</p>
+                  <p className="text-green-600">{`Rp ${currencyFormatter.format(balance)}`}</p>
                 </div>
 
-                <div className="bg-gray-50 dark:bg-gray-950 px-6 rounded-2xl">
+
+                <div className="bg-gray-50 dark:bg-gray-950  rounded-2xl text-left">
+                  <label className="text-sm font-semibold" htmlFor="notes">
+                    Notes
+                  </label>
                   <div className="mt-2 relative bg-transparent">
-                    <div className="absolute inset-y-0 left-0 flex items-center font-semibold text-3xl">
-                      <label className="text-sm text-left font-semibold" htmlFor="notes">
-                        Notes:
-                      </label>
-                    </div>
                     <div>
                       <input
                         id="notes"
                         name="notes"
                         type="text"
+                        placeholder="Optional"
                         value={notesInput}
                         onChange={(e) => setNotesInput(e.target.value)}
-                        className="pl-14 text-sm block w-full bg-transparent px-3 py-1.5 focus:outline-none"
+                        className="text-sm block w-full bg-gray-100 px-3 py-4 focus:outline-none"
                       />
                     </div>
                   </div>

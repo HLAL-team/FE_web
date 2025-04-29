@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+
 
 const FavoriteAccountList = ({ onSelectAccount }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchFavorites = () => {
     const token = localStorage.getItem('authToken');
 
     if (!token) {
@@ -13,6 +16,10 @@ const FavoriteAccountList = ({ onSelectAccount }) => {
       setLoading(false);
       return;
     }
+
+    setLoading(true); 
+    setError(null);   
+
     fetch("http://localhost:8080/api/transactions/favorite", {
       method: 'GET',
       headers: {
@@ -28,37 +35,59 @@ const FavoriteAccountList = ({ onSelectAccount }) => {
       })
       .then(data => {
         if (data.status && data.data && Array.isArray(data.data)) {
-          setFavorites(data.data); 
+          setFavorites(data.data);
         } else {
           setError('Tidak ada data favorit');
+          setFavorites([]);
         }
-        setLoading(false);
       })
       .catch(err => {
         setError(err.message);
+        setFavorites([]);
+      })
+      .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchFavorites();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div>
-      <h2 className="text-xl text-left font-semibold mb-4">Favorite Account List</h2>
+<div className="flex items-center justify-between shadow-sm mb-4 bg-none py-2 border-b border-gray-200">
+<h2 className="text-xl text-left font-semibold ">Favorite Transfers</h2>
+  <button
+  onClick={fetchFavorites}
+  className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+  title="Refresh"
+>
+  <FontAwesomeIcon icon={faSyncAlt} className="text-gray-700 dark:text-gray-200 w-4 h-4" />
+</button>
+
+</div>
+
+
+      {loading && <div>Loading...</div>}
+      {error && <div className="text-red-600">Error: {error}</div>}
+
       <ul className="space-y-4">
         {favorites.length > 0 ? (
           favorites.map((account, index) => (
-            <li key={index} className="flex items-center justify-between cursor-pointer" onClick={() => onSelectAccount(account.accountNumber)}>
+            <li
+              key={index}
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => onSelectAccount(account.accountNumber)}
+            >
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full">
+                <div className="w-8 h-8 bg-gray-300 rounded-full overflow-hidden">
                   {account.avatarUrl ? (
-                    <img src={account.avatarUrl} alt={account.fullname} className="w-full h-full rounded-full object-cover" />
+                    <img
+                      src={account.avatarUrl}
+                      alt={account.fullname}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full bg-gray-400 rounded-full"></div>
                   )}
@@ -74,7 +103,7 @@ const FavoriteAccountList = ({ onSelectAccount }) => {
             </li>
           ))
         ) : (
-          <li>Tidak ada akun favorit.</li>
+          !loading && !error && <li className="text-gray-400">You don't have any favorite accounts.</li>
         )}
       </ul>
     </div>

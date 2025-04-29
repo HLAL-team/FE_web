@@ -118,7 +118,6 @@ const ProfilePage = () => {
       <div className="dark:text-white">
         <Navbar />
         <div className="flex items-start mb-8">
-          {/* Profile Sidebar */}
           <div className="basis-1/5 flex flex-col items-center mt-12 relative">
             <div className="relative">
               <img
@@ -175,12 +174,10 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Profile Form */}
           <div className="basis-4/5 flex flex-col items-start justify-start px-6 py-6">
             <div className="w-full max-w-5xl bg-white dark:bg-black rounded-2xl shadow-md p-10">
               <form onSubmit={handleSubmit} className="space-y-6 w-full text-left">
                 
-                {/* Full Name */}
                 <div>
                   <label className="block text-sm font-bold mb-1">Full Name</label>
                   <input
@@ -233,7 +230,6 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   className="bg-primary text-white dark:text-black py-2 px-4 w-full rounded-xl font-semibold hover:shadow-inner hover:drop-shadow-none drop-shadow-xl"

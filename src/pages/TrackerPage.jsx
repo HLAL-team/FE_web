@@ -65,24 +65,17 @@ const TrackerPage = () => {
     fetchData();
   }, [activeTab, selectedWeek, selectedMonth, selectedYear]);
 
-  // Helper function to get days in month considering leap year for February
   const getDaysInMonth = (month, year) => {
-    return new Date(year, month + 1, 0).getDate(); // Get last day of the month
+    return new Date(year, month + 1, 0).getDate(); 
   };
 
-  // Helper function to generate weekly options based on month and year
-  // Helper function to generate weekly options based on month and year
 const generateWeeklyOptions = (month, year) => {
   const daysInMonth = getDaysInMonth(month, year);
   const weeks = [];
 
-  // Week 1: 1-7
   weeks.push({ label: 'Week 1', value: '1-7' });
-  // Week 2: 8-14
   weeks.push({ label: 'Week 2', value: '8-14' });
-  // Week 3: 15-21
   weeks.push({ label: 'Week 3', value: '15-21' });
-  // Week 4: 22-30 or 22-31 depending on month
   const lastWeekEnd = daysInMonth === 28 ? '22-28' : daysInMonth === 29 ? '22-29' : '22-31';
   weeks.push({ label: 'Week 4', value: lastWeekEnd });
 
@@ -91,8 +84,6 @@ const generateWeeklyOptions = (month, year) => {
 
 const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
 
-
-  // Function to filter transactions sesuai tab dan filter
   const filterTransactions = () => {
     return transactions.filter((item) => {
       const date = new Date(item.transactionDate);
@@ -101,7 +92,7 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
       const year = date.getFullYear();
 
       if (year !== selectedYear) {
-        return false; // Filter hanya berdasarkan tahun
+        return false;
       }
 
       if (activeTab === 'Weekly') {
@@ -110,13 +101,11 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
       }
 
       if (activeTab === 'Quarterly') {
-        // Group by quarter
         const quarter = Math.floor(month / 3); // Q1: 0, Q2: 1, Q3: 2, Q4: 3
         const selectedQuarter = Math.floor(selectedMonth / 3);
         return month >= selectedQuarter * 3 && month < (selectedQuarter + 1) * 3;
       }
 
-      // Monthly default, sudah dicek bulan & tahun di atas
       return month === selectedMonth;
     });
   };
@@ -137,10 +126,9 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
         <Navbar />
         <div className="mx-8">
           <div>
-            <h2 className="text-4xl text-left font-semibold">Monthly Tracker</h2>
+            <h2 className="text-4xl text-left font-bold">My Tracker</h2>
           </div>
 
-          {/* Tabs */}
           <div className="flex justify-center my-6">
             {['Weekly', 'Monthly', 'Quarterly'].map((tab) => (
               <button
@@ -155,7 +143,6 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
             ))}
           </div>
 
-          {/* Filter Dropdown */}
           <div className="flex justify-center gap-4 mb-8">
           {activeTab === 'Weekly' && (
   <select
@@ -202,7 +189,6 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
             </select>
           </div>
 
-          {/* Chart */}
           <BarChart
             activeTab={activeTab}
             selectedWeek={selectedWeek}
@@ -210,7 +196,6 @@ const weeklyOptions = generateWeeklyOptions(selectedMonth, selectedYear);
             selectedYear={selectedYear}
           />
 
-          {/* Total Income and Outcome */}
           <div className="flex justify-between gap-8 px-36 mt-4 mb-16 text-left">
             <div className="w-full md:w-1/2">
               <h2 className="text-xl font-semibold text-gray-900">Total Income</h2>
