@@ -58,9 +58,9 @@ createRoot(document.getElementById("root")).render(
           <Route
             path="/landing"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
               <LandingPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
 
           />

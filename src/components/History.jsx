@@ -1,50 +1,159 @@
 import { Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { currencyFormatter } from "../helper/helper";
 
 const History = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState("ascending");
+  const [showLimit, setShowLimit] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const token = localStorage.getItem("authToken");
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/transactions", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Data tidak ditemukan");
+
+        const data = await response.json();
+        setTransactions(data.data);
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    if (token) {
+      fetchTransactions();
+    } else {
+      alert("Token tidak ditemukan! Anda perlu login.");
+    }
+  }, [token]);
+
+  const filteredTransactions = useMemo(() => {
+    let data = [...transactions];
+
+    // Search
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      data = data.filter((t) =>
+        (t.description && t.description.toLowerCase().includes(query)) ||
+        (t.transactionType && t.transactionType.toLowerCase().includes(query)) ||
+        (t.recipient && t.recipient.toLowerCase().includes(query)) ||
+        (t.sender && t.sender.toLowerCase().includes(query))
+      );
+    }
+
+    // Sort
+    data.sort((a, b) => {
+      const aVal = sortBy === "date" ? new Date(a.transactionDateFormatted) : a.amount;
+      const bVal = sortBy === "date" ? new Date(b.transactionDateFormatted) : b.amount;
+      return sortOrder === "ascending" ? aVal - bVal : bVal - aVal;
+    });
+
+    return data;
+  }, [transactions, searchQuery, sortBy, sortOrder]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / showLimit);
+
+  const paginatedTransactions = useMemo(() => {
+    const start = (currentPage - 1) * showLimit;
+    return filteredTransactions.slice(start, start + showLimit);
+  }, [filteredTransactions, currentPage, showLimit]);
+
   return (
     <div className="px-6 sm:px-4 lg:px-8 pb-9 dark:text-white">
-      <SearchAndFilter />
-      <TransactionList />
-      <Pagination />
+      <SearchAndFilter
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        showLimit={showLimit}
+        setShowLimit={setShowLimit}
+        setCurrentPage={setCurrentPage}
+      />
+      <TransactionList transactions={paginatedTransactions} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };
 
-const SearchAndFilter = () => {
+const SearchAndFilter = ({
+  searchQuery, setSearchQuery,
+  sortBy, setSortBy,
+  sortOrder, setSortOrder,
+  showLimit, setShowLimit,
+  setCurrentPage
+}) => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col md:flex-row justify-between items-center gap-4 my-6">
       {/* Search */}
-      <div className="relative flex items-center rounded-lg max-w-xs w-full">
+      <div className="relative flex items-center w-full md:w-1/3">
         <div className="absolute left-4">
           <Search size={16} className="text-gray-400" />
         </div>
-
         <input
           type="text"
           placeholder="Search"
-          className="pl-12 flex-1 shadow-md p-2 rounded-md dark:bg-black"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setCurrentPage(1); // Reset ke halaman 1 setelah search
+          }}
+          className="pl-12 flex-1 shadow-md p-2 rounded-md dark:bg-black w-full"
         />
       </div>
 
-      {/* Filter */}
-      <div className="flex justify-between gap-14">
-        <div className="flex items-center space-x-4">
+      
+
+      {/* Filter and Sort */}
+      <div className="flex flex-wrap gap-4 items-center justify-center">
+        <div className="flex items-center space-x-2">
           <label className="text-gray-400">Show</label>
-          <select className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black">
-            <option value="Last 10 transactions">Last 10 transactions</option>
+          <select
+            value={showLimit}
+            onChange={(e) => {
+              setShowLimit(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
           </select>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           <label className="text-gray-400">Sort By</label>
-          <select className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black"
+          >
             <option value="date">Date</option>
             <option value="amount">Amount</option>
           </select>
-
-          <select className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black">
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="rounded-md px-3 py-2 shadow-md text-gray-400 dark:bg-black"
+          >
             <option value="ascending">Ascending</option>
             <option value="descending">Descending</option>
           </select>
@@ -54,41 +163,14 @@ const SearchAndFilter = () => {
   );
 };
 
-const TransactionList = () => {
-  const [transactions, setTransactions] = useState([]);
-  
-  const token = localStorage.getItem("authToken");
-
-  useEffect(() => {
-    const fetchAccount = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/transactions", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`, 
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) throw new Error("Data tidak ditemukan");
-
-        const data = await response.json();
-        setTransactions(data.data); 
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    if (token) {
-      fetchAccount();
-    } else {
-      alert("Token tidak ditemukan! Anda perlu login.");
-    }
-  }, [token]);
+const TransactionList = ({ transactions }) => {
+  if (!transactions.length) {
+    return <div className="text-center py-6">No transactions found.</div>;
+  }
 
   return (
-    <div className="container py-6 min-w-full">
-      <table className="min-w-full table-auto border-collapse border border-gray-100 dark:border-gray-900">
+    <div className="container py-6 min-w-full overflow-x-auto">
+      <table className="text-left min-w-full table-auto border-collapse border border-gray-100 dark:border-gray-900">
         <thead>
           <tr className="bg-white dark:bg-black">
             <th className="px-4 py-2 text-left border-b dark:border-black">Date & Time</th>
@@ -99,25 +181,25 @@ const TransactionList = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction, index) => (
+          {transactions.map((transaction) => (
             <tr
               key={transaction.transactionId}
               className="odd:bg-gray-100 dark:odd:bg-gray-900 even:bg-white dark:even:bg-black"
             >
-              <td className="px-4 py-2 border-b dark:border-black text-left">
+              <td className="px-4 py-2 border-b dark:border-black">
                 {transaction.transactionDateFormatted}
               </td>
-              <td className="px-4 py-2 border-b dark:border-black text-left">
+              <td className="px-4 py-2 border-b dark:border-black">
                 {transaction.transactionType}
               </td>
-              <td className="px-4 py-2 border-b dark:border-black text-left">
-                {transaction.recipient ? transaction.recipient : transaction.sender}
+              <td className="px-4 py-2 border-b dark:border-black">
+                {transaction.recipient || transaction.sender}
               </td>
-              <td className="px-4 py-2 border-b dark:border-black text-left">
+              <td className="px-4 py-2 border-b dark:border-black">
                 {transaction.description}
               </td>
               <td
-                className={`px-4 py-2 border-b dark:border-black text-left font-semibold ${
+                className={`px-4 py-2 border-b dark:border-black font-semibold ${
                   transaction.transactionType.toLowerCase().includes("top up")
                     ? "text-green-500"
                     : "text-red-500"
@@ -134,14 +216,15 @@ const TransactionList = () => {
   );
 };
 
-const Pagination = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 3;
+const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+  const changePage = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
-  const changePage = (page) => setCurrentPage(page);
+  if (totalPages <= 1) return null;
 
   return (
-    <div className="flex justify-start mt-4 font-semibold">
+    <div className="flex justify-center mt-4 font-semibold gap-1 flex-wrap">
       <button
         onClick={() => changePage(1)}
         disabled={currentPage === 1}
@@ -149,6 +232,7 @@ const Pagination = () => {
       >
         First
       </button>
+
       {[...Array(totalPages)].map((_, index) => (
         <button
           key={index}
@@ -162,6 +246,7 @@ const Pagination = () => {
           {index + 1}
         </button>
       ))}
+
       <button
         onClick={() => changePage(currentPage + 1)}
         disabled={currentPage === totalPages}

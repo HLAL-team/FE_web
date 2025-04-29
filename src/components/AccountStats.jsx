@@ -35,7 +35,7 @@ function AccountStats() {
   return (
     <div className="flex gap-12 px-6 sm:px-4 lg:px-8 mb-9 dark:text-white">
       <AccountInfo accountNumber={account.accountNumber} />
-      <BalanceInfo balance={account.balance} />
+      <BalanceInfo balance={currencyFormatter.format(Math.abs(account.balance))} />
     </div>
   );
 }

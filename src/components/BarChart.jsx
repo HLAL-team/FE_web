@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
 
-const getDateRanges = (numDays) => {
-    const ranges = [];
-    let start = 1;
-    while (start <= numDays) {
-        const end = Math.min(start + 6, numDays); 
-        ranges.push(`${start}-${end}`);
-        start = end + 1;
-    }
-    return ranges;
-};
-
 const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState([]);
@@ -39,8 +28,6 @@ const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
                     if (data.status) {
                         console.log('Transaksi diterima:', data.data);
                         setTransactions(data.data || []);
-                        setTotalIncome(data.totalIncome);
-                        setTotalOutcome(data.totalOutcome);
                     } else {
                         console.error('Failed to fetch data:', data.message);
                     }
@@ -68,6 +55,7 @@ const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
             return;
         }
 
+        // Proses transaksi untuk setiap hari
         transactions.forEach((transaction) => {
             const transactionDate = new Date(transaction.transactionDate);
             const day = transactionDate.getDate(); 
@@ -82,18 +70,17 @@ const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
         });
 
         const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate(); 
-        if (activeTab === 'Weekly') {
-            const [start, end] = selectedWeek.split('-').map(Number);
-            const adjustedEnd = Math.min(end, daysInMonth);
-            tempCategories = Array.from({ length: adjustedEnd - start + 1 }, (_, i) => (start + i).toString());
 
-            incomeData = tempCategories.map((day) => incomeMap[parseInt(day)] || 0);
-            outcomeData = tempCategories.map((day) => outcomeMap[parseInt(day)] || 0);
-        } 
-        else if (activeTab === 'Monthly') {
-            const ranges = getDateRanges(daysInMonth);
+        // Menangani tab Monthly
+        if (activeTab === 'Monthly') {
+            // Menentukan rentang 4 kolom untuk Monthly (7 hari per kolom)
+            const ranges = [
+                '1-7', '8-14', '15-21', `22-${daysInMonth}`  // Kolom 4 menggunakan daysInMonth yang benar
+            ];
+
             tempCategories = ranges;
 
+            // Hitung total income dan outcome untuk setiap rentang
             incomeData = ranges.map((range) => {
                 const [start, end] = range.split('-').map(Number);
                 let income = 0;
@@ -112,12 +99,25 @@ const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
                 return outcome;
             });
         } 
+
+        // Menangani tab Weekly
+        else if (activeTab === 'Weekly') {
+            const [start, end] = selectedWeek.split('-').map(Number);
+            const adjustedEnd = Math.min(end, daysInMonth);
+            tempCategories = Array.from({ length: adjustedEnd - start + 1 }, (_, i) => (start + i).toString());
+
+            incomeData = tempCategories.map((day) => incomeMap[parseInt(day)] || 0);
+            outcomeData = tempCategories.map((day) => outcomeMap[parseInt(day)] || 0);
+        } 
+
+        // Menangani tab Quarterly
         else if (activeTab === 'Quarterly') {
             tempCategories = ['Q1', 'Q2', 'Q3', 'Q4'];
             incomeData = [];
             outcomeData = [];
         }
 
+        // Memperbarui kategori dan data di state
         setCategories(tempCategories);
         setSeries([
             { name: 'Income', data: incomeData, color: '#057268' },
