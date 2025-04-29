@@ -8,14 +8,18 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (usernameOrEmail, password) => {
-    if (usernameOrEmail !== "admin") return false;
-    if (password !== "admin123") return false;
-
-    localStorage.setItem("auth", "true");
-    setIsLoggedIn(true);
-    navigate('/Dashboard');
-
-    return true;
+    if (usernameOrEmail && password) {
+      localStorage.setItem("auth", "true");
+      setIsLoggedIn(true);
+      return true;
+    }
+    return false;
+    // if (usernameOrEmail !== "admin") return false;
+    // if (password !== "admin123") return false;
+    // localStorage.setItem("auth", "true");
+    // setIsLoggedIn(true);
+    // // navigate('/Dashboard');
+    // return true;
   };
 
   const logout = () => {

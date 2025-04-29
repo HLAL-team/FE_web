@@ -1,5 +1,7 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router";
+// import { BrowserRouter, Routes, Route } from "react-router";
+import { Navigate, BrowserRouter, Routes, Route } from "react-router-dom";
+
 import "./index.css";
 import App from "./App.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -13,7 +15,6 @@ import TrackerPage from "./pages/TrackerPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 
-
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <ThemeProvider>
@@ -22,54 +23,53 @@ createRoot(document.getElementById("root")).render(
           <Route
             path="/"
             element={
-              // <ProtectedRoute>
-              <App />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <App />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="/transfer"
             element={
-              // <ProtectedRoute>
-              <TransferPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <TransferPage />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="/topup"
             element={
-              // <ProtectedRoute>
-              <TopUpPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <TopUpPage />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="/tracker"
             element={
-              // <ProtectedRoute>
-              <TrackerPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <TrackerPage />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="/landing"
             element={
-              // <ProtectedRoute>
-              <LandingPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <LandingPage />
+              </ProtectedRoute>
             }
-
           />
-                    <Route
+          <Route
             path="/account"
             element={
-              // <ProtectedRoute>
-              <ProfilePage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
             }
           />
 

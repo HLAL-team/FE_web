@@ -43,11 +43,13 @@ const LoginPage = () => {
 
         localStorage.setItem("authToken", data.token);
 
-        login(usernameOrEmail, password, navigate);
+        const loginSuccess = login(usernameOrEmail, password); // hanya 2 argumen
 
-        navigate("/");
-      } else {
-        alert(data.message || "Gagal Login. Silakan coba lagi.");
+        if (loginSuccess) {
+          navigate("/"); // pindah ke halaman utama
+        } else {
+          alert("Autentikasi gagal.");
+        }
       }
     } catch (error) {
       console.error("Error saat Login:", error);
@@ -65,18 +67,20 @@ const LoginPage = () => {
           onClick={toggleTheme}
         >
           <div
-            className={`absolute transition-transform duration-300 ${isDark
+            className={`absolute transition-transform duration-300 ${
+              isDark
                 ? "transform translate-y-0 opacity-100"
                 : "transform translate-y-full opacity-0"
-              }`}
+            }`}
           >
             <Moon key="moon" color="#F8AB39" size={28} />
           </div>
           <div
-            className={`absolute transition-transform duration-300 ${isDark
+            className={`absolute transition-transform duration-300 ${
+              isDark
                 ? "transform -translate-y-full opacity-0"
                 : "transform translate-y-0 opacity-100"
-              }`}
+            }`}
           >
             <Sun key="sun" color="#F8AB39" size={28} />
           </div>
