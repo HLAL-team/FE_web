@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';  // Fix import path
 
 const ProfileDropdown = ({ onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +81,7 @@ const ProfileDropdown = ({ onClick }) => {
           </Link>
           <button
             onClick={onClick}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700"
+            className="block w-full text-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700"
           >
             Logout
           </button>

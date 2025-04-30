@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import ModalTransferSuccess from "../components/ModalTransferSuccess";
 import FavoriteAccountList from "../components/FavoriteAccount";
 import { blockInvalidChar, currencyFormatter, inputCurrencyFormatter } from "../helper/helper";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 
 const TransferPage = () => {
@@ -21,7 +21,6 @@ const TransferPage = () => {
   const [favoriteId, setFavoriteId] = useState(null);
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const [favoriteAccounts, setFavoriteAccounts] = useState([]);
-
 
   const navigate = useNavigate();
 
@@ -150,6 +149,7 @@ const TransferPage = () => {
       return;
     }
 
+    setIsFavoriteLoading(true);
     try {
       const response = await fetch("https://kelompok2.serverku.org/api/transactions/favorite", {
         method: "POST",
@@ -172,10 +172,10 @@ const TransferPage = () => {
       }
     } catch (err) {
       alert("Terjadi kesalahan: " + err.message);
+    } finally {
+      setIsFavoriteLoading(false);
     }
   };
-
-
 
   const handleRemoveFavorite = async () => {
     const accountNo = selectedAccount?.accountNo?.toString();
@@ -203,7 +203,6 @@ const TransferPage = () => {
       setIsFavoriteLoading(false);
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -300,11 +299,13 @@ const TransferPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between border text-sm py-2 rounded-lg">
-                  <span className="text-l font-semibold text-gray-600 dark:text-gray-400 p-2">
-                    {accountCheckResult ? accountCheckResult : " "}
-                  </span>
-                  {accountCheckResult && (
+
+                {/* Only show account result when we have one */}
+                {accountCheckResult && (
+                  <div className="flex items-center justify-between border text-sm py-2 rounded-lg">
+                    <span className="text-l font-semibold text-gray-600 dark:text-gray-400 p-2">
+                      {accountCheckResult}
+                    </span>
                     <button
                       type="button"
                       onClick={isFavorite ? handleRemoveFavorite : handleAddFavorite}
@@ -318,10 +319,10 @@ const TransferPage = () => {
                         isFavorite ? "★" : "☆"
                       )}
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                <div className="bg-gray-50 dark:bg-gray-950 rounded-2xl">
+                <div className="dark:bg-gray-950 rounded-2xl">
                   <label htmlFor="amount" className="block text-left font-semibold">
                     Amount
                   </label>
@@ -351,7 +352,7 @@ const TransferPage = () => {
                 </div>
 
 
-                <div className="bg-gray-50 dark:bg-gray-950  rounded-2xl text-left">
+                <div className="dark:bg-gray-950 rounded-2xl text-left">
                   <label className="text-sm font-semibold" htmlFor="notes">
                     Notes
                   </label>

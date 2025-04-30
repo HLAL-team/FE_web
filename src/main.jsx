@@ -1,5 +1,4 @@
 import { createRoot } from "react-dom/client";
-// import { BrowserRouter, Routes, Route } from "react-router";
 import { Navigate, BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./index.css";
@@ -20,15 +19,28 @@ createRoot(document.getElementById("root")).render(
     <ThemeProvider>
       <AuthProvider>
         <Routes>
+          {/* Redirect root to landing for unauthenticated users or home for authenticated users */}
           <Route
             path="/"
+            element={
+              <AuthGuard />
+            }
+          />
+
+          {/* Public routes */}
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/home"
             element={
               <ProtectedRoute>
                 <App />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/transfer"
             element={
@@ -37,7 +49,6 @@ createRoot(document.getElementById("root")).render(
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/topup"
             element={
@@ -46,21 +57,11 @@ createRoot(document.getElementById("root")).render(
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/tracker"
             element={
               <ProtectedRoute>
                 <TrackerPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/landing"
-            element={
-              <ProtectedRoute>
-                <LandingPage />
               </ProtectedRoute>
             }
           />
@@ -72,11 +73,14 @@ createRoot(document.getElementById("root")).render(
               </ProtectedRoute>
             }
           />
-
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </AuthProvider>
     </ThemeProvider>
   </BrowserRouter>
 );
+
+// New component to handle conditional redirect based on authentication
+function AuthGuard() {
+  const isLoggedIn = localStorage.getItem("auth") === "true";
+  return isLoggedIn ? <Navigate to="/home" /> : <Navigate to="/landing" />;
+}

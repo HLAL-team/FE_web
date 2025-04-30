@@ -173,7 +173,7 @@ const TopUpPage = () => {
               </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="bg-gray-50 dark:bg-gray-950 py-4 rounded-2xl">
+              <div className="dark:bg-gray-950 py-4 rounded-2xl">
                 <label htmlFor="amount" className="block text-sm text-left font-semibold">
                   Amount
                 </label>
@@ -230,7 +230,7 @@ const TopUpPage = () => {
 </div>
 
 
-              <div className="bg-gray-50 dark:bg-gray-950  rounded-2xl text-left">
+              <div className="dark:bg-gray-950  rounded-2xl text-left">
                   <label className="text-sm font-semibold" htmlFor="notes">
                     Notes
                   </label>
