@@ -35,7 +35,14 @@ const FavoriteAccountList = ({ onSelectAccount }) => {
       })
       .then(data => {
         if (data.status && data.data && Array.isArray(data.data)) {
-          setFavorites(data.data);
+          // Process avatarUrls to include base URL
+          const processedData = data.data.map(item => ({
+            ...item,
+            avatarUrl: item.avatarUrl ? 
+              (item.avatarUrl.startsWith('http') ? item.avatarUrl : `https://kelompok2.serverku.org${item.avatarUrl}`) : 
+              null
+          }));
+          setFavorites(processedData);
         } else {
           setError('Tidak ada data favorit');
           setFavorites([]);

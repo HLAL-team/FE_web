@@ -48,13 +48,13 @@ const ProfilePage = () => {
           username: data.username || "",
           email: data.email || "",
           phone: data.phoneNumber || "",
-          profileImage: data.avatarUrl || "",
+          profileImage: data.avatarUrl ? `https://kelompok2.serverku.org${data.avatarUrl}` : "",
         }));
       } catch (error) {
         console.error('Error fetching profile:', error);
-        setModalMessage("Profile updated successfully!");
+        setModalMessage("Error loading profile data");
         setIsModalOpen(true);
-              }
+      }
     };
 
     fetchProfile();
@@ -74,7 +74,7 @@ const ProfilePage = () => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setProfileData({ ...profileData, profileImage: imageUrl });
+      setProfileData({ ...profileData, profileImage: file });
     }
   };
 
@@ -95,7 +95,7 @@ const ProfilePage = () => {
         formData.append("avatarUrl", profileData.profileImage);
       }
 
-      const response = await fetch('http://localhost:8080/api/auth/edit-profile', {
+      const response = await fetch('https://kelompok2.serverku.org/api/auth/edit-profile', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -110,7 +110,7 @@ const ProfilePage = () => {
 
       setProfileData(prev => ({
         ...prev,
-        profileImage: data.avatarUrl || prev.profileImage,
+        profileImage: data.avatarUrl ? `https://kelompok2.serverku.org${data.avatarUrl}` : prev.profileImage,
       }));
 
       setModalMessage("Profile updated successfully!");

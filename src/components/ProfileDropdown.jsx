@@ -1,67 +1,90 @@
-import { useState, useEffect } from "react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { useNavigate } from "react-router-dom"; // Jika kamu menggunakan react-router
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router';
 
-const ProfileDropdown = () => {
-  const [open, setOpen] = useState(false);
-  const [profile, setProfile] = useState(null);
-  const navigate = useNavigate(); // Hook untuk melakukan navigasi
+const ProfileDropdown = ({ onClick }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [profileData, setProfileData] = useState({
+    fullname: '',
+    avatarUrl: ''
+  });
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    fetch("https://kelompok2.serverku.org/api/auth/profile", {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        const response = await fetch("https://kelompok2.serverku.org/api/auth/profile", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          setProfileData(data);
+        } else {
+          console.error("Failed to fetch profile data", data);
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
       }
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then((data) => setProfile(data))
-      .catch((err) => console.error("Error fetching profile:", err));
+    };
+
+    fetchProfileData();
   }, []);
 
-  const avatar = profile?.avatarUrl || "/default-avatar.png";
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
 
-  // Fungsi untuk logout
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Menghapus token dari localStorage
-    navigate("/login"); // Redirect ke halaman login (sesuaikan dengan rute di aplikasi kamu)
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  // Construct the full image URL
+  const imageUrl = profileData.avatarUrl 
+    ? `https://kelompok2.serverku.org${profileData.avatarUrl}` 
+    : "./src/assets/profile.jpg";
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 focus:outline-none"
+    <div ref={dropdownRef} className="ml-8 relative">
+      <button 
+        onClick={toggleDropdown}
+        className="flex items-center"
       >
         <img
-          src={avatar}
+          src={imageUrl}
           alt="Profile"
-          className="w-10 h-10 rounded-full border border-gray-300"
+          className="h-8 w-8 rounded-full object-cover border-2 border-primary"
         />
-        <ChevronDownIcon className="w-4 h-4 text-gray-500" />
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-200">
-          <ul className="text-gray-700">
-            <li className="px-4 py-2 hover:bg-gray-100">
-              <a href="account" className="block px-4 py-2 hover:bg-gray-100">
-                My Account
-              </a>
-            </li>
-            <li className="px-4 py-2 hover:bg-gray-100">
-              <a
-                className="block px-4 py-2 hover:bg-gray-100"
-                onClick={handleLogout} 
-              >
-                Sign Out
-              </a>
-            </li>
-          </ul>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg py-1 z-10">
+          <Link
+            to="/profile"
+            className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            Profile
+          </Link>
+          <button
+            onClick={onClick}
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            Logout
+          </button>
         </div>
       )}
     </div>
