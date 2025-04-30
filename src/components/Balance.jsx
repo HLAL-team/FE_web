@@ -7,7 +7,7 @@ const Hero = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/profile", {
+        const response = await fetch("https://kelompok2.serverku.org/api/auth/profile", {
           method: "GET", 
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("authToken")}`, 
@@ -67,7 +67,7 @@ const Greeting = ({ firstName }) => {
 };
 
 const Profile = ({ firstName, lastName, photo }) => {
-  const imageUrl = `http://localhost:8080${photo}`;
+  const imageUrl = `https://kelompok2.serverku.org${photo}`;
   
   console.log(imageUrl); 
 

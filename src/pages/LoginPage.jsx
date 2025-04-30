@@ -20,7 +20,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch("https://kelompok2.serverku.org/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

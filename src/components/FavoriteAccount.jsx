@@ -20,7 +20,7 @@ const FavoriteAccountList = ({ onSelectAccount }) => {
     setLoading(true); 
     setError(null);   
 
-    fetch("http://localhost:8080/api/transactions/favorite", {
+    fetch("https://kelompok2.serverku.org/api/transactions/favorite", {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

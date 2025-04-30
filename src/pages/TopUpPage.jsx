@@ -34,7 +34,7 @@ const TopUpPage = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:8080/api/transactions/topupmethod", {
+        const response = await fetch("https://kelompok2.serverku.org/api/transactions/topupmethod", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -109,7 +109,7 @@ const TopUpPage = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/transactions/create", {
+      const response = await fetch("https://kelompok2.serverku.org/api/transactions/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

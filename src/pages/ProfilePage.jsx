@@ -32,7 +32,7 @@ const ProfilePage = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:8080/api/auth/profile', {
+        const response = await fetch('https://kelompok2.serverku.org/api/auth/profile', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

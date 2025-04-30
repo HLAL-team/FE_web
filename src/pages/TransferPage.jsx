@@ -28,7 +28,7 @@ const TransferPage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/profile", {
+        const response = await fetch("https://kelompok2.serverku.org/api/auth/profile", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
@@ -89,7 +89,7 @@ const TransferPage = () => {
 
     setIsCheckingAccount(true);
     try {
-      const response = await fetch("http://localhost:8080/api/transactions/checking", {
+      const response = await fetch("https://kelompok2.serverku.org/api/transactions/checking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ const TransferPage = () => {
 
       setAccountCheckResult(data.data.recipientName);
 
-      const favRes = await fetch("http://localhost:8080/api/transactions/favorite", {
+      const favRes = await fetch("https://kelompok2.serverku.org/api/transactions/favorite", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
@@ -151,7 +151,7 @@ const TransferPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/transactions/favorite", {
+      const response = await fetch("https://kelompok2.serverku.org/api/transactions/favorite", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -183,7 +183,7 @@ const TransferPage = () => {
 
     setIsFavoriteLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/transactions/favorite?favoriteAccountNumber=${accountNo}`, {
+      const response = await fetch(`https://kelompok2.serverku.org/api/transactions/favorite?favoriteAccountNumber=${accountNo}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
@@ -229,7 +229,7 @@ const TransferPage = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/transactions/create", {
+      const response = await fetch("https://kelompok2.serverku.org/api/transactions/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

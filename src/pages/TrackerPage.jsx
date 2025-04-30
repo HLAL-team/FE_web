@@ -35,7 +35,7 @@ const TrackerPage = () => {
         params.append('month', selectedMonth + 1);
         params.append('year', selectedYear);
 
-        const response = await fetch(`http://localhost:8080/api/transactions?${params.toString()}`, {
+        const response = await fetch(`https://kelompok2.serverku.org/api/transactions?${params.toString()}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

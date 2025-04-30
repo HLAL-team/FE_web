@@ -11,7 +11,7 @@ function AccountStats() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/profile", {
+        const response = await fetch("https://kelompok2.serverku.org/api/auth/profile", {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
             "Content-Type": "application/json",

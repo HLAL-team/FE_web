@@ -15,7 +15,7 @@ const BarChart = ({ activeTab, selectedWeek, selectedMonth, selectedYear }) => {
                     return;
                 }
 
-                const response = await fetch('http://localhost:8080/api/transactions', {
+                const response = await fetch('https://kelompok2.serverku.org/api/transactions', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

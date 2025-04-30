@@ -9,7 +9,7 @@ const ProfileDropdown = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    fetch("http://localhost:8080/api/auth/profile", {
+    fetch("https://kelompok2.serverku.org/api/auth/profile", {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
