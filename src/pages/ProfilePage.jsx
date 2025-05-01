@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Layout from "../components/Layout";
 import ModalAlert from "../components/ModalAlert";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState({
@@ -18,7 +20,7 @@ const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  
+
   const fileInputRef = useRef(null);
   const usernameInputRef = useRef(null);
 
@@ -45,7 +47,7 @@ const ProfilePage = () => {
       if (!response.ok) throw new Error("Failed to fetch profile");
 
       const data = await response.json();
-      
+
       setProfileData({
         fullName: data.fullname || "",
         username: data.username || "",
@@ -92,31 +94,31 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-  
+
     try {
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error("Authentication token not found");
-  
+
       const formData = new FormData();
-      
+
       formData.append("fullname", profileData.fullName.trim());
-      
+
       if (profileData.isEditingUsername) {
         formData.append("username", profileData.username.trim());
       }
-      
+
       if (profileData.newPassword) {
         formData.append("password", profileData.newPassword);
       }
-  
+
       if (selectedImage) {
         formData.append("avatar", selectedImage, selectedImage.name);
       }
-  
+
       for (let [key, value] of formData.entries()) {
         console.log(`Sending ${key}:`, value instanceof File ? value.name : value);
       }
-  
+
       const response = await fetch('https://kelompok2.serverku.org/api/auth/edit-profile', {
         method: 'POST',
         headers: {
@@ -124,9 +126,9 @@ const ProfilePage = () => {
         },
         body: formData
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         if (response.status === 400) {
           throw new Error(data.message || "Invalid input data");
@@ -136,23 +138,23 @@ const ProfilePage = () => {
           throw new Error(data.message || "Failed to update profile");
         }
       }
-  
+
       if (data.avatarUrl) {
         setAvatarUrl(`https://kelompok2.serverku.org${data.avatarUrl}`);
         setSelectedImage(null);
       }
-  
+
       setModalMessage("Profile updated successfully!");
       setIsModalOpen(true);
-      
-      setProfileData(prev => ({ 
-        ...prev, 
+
+      setProfileData(prev => ({
+        ...prev,
         newPassword: "",
-        isEditingUsername: false 
+        isEditingUsername: false
       }));
-      
+
       await fetchProfileData();
-  
+
     } catch (error) {
       console.error("Error updating profile:", error);
       setModalMessage(error.message || "Failed to update profile");
@@ -183,10 +185,9 @@ const ProfilePage = () => {
                 className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow"
                 disabled={isLoading}
               >
-                <img 
-                  src="./src/assets/pena_edit.png" 
-                  alt="Edit" 
-                  className="w-4 h-4" 
+                <FontAwesomeIcon
+                  icon={faPenToSquare}
+                  className="w-3 h-3 text-gray-600"
                 />
               </button>
               <input
@@ -231,10 +232,9 @@ const ProfilePage = () => {
                     className="ml-2"
                     disabled={isLoading}
                   >
-                    <img 
-                      src="./src/assets/pena_edit.png" 
-                      alt="Edit" 
-                      className="w-4 h-4" 
+                    <FontAwesomeIcon
+                      icon={faPenToSquare}
+                      className="w-3 h-3 text-gray-600"
                     />
                   </button>
                 </>
@@ -285,10 +285,9 @@ const ProfilePage = () => {
                       <label className="block text-sm font-bold mb-1 mr-2">
                         New Password
                       </label>
-                      <img 
-                        src="./src/assets/pena_edit.png" 
-                        alt="Edit" 
-                        className="w-4 h-4" 
+                      <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        className="w-3 h-3 text-gray-600"
                       />
                     </div>
                     <input
