@@ -69,19 +69,20 @@ const Greeting = ({ firstName }) => {
 const Profile = ({ firstName, lastName, photo }) => {
   const imageUrl = `https://kelompok2.serverku.org${photo}`;
   
-  console.log(imageUrl); 
-
   return (
     <div className="flex items-center gap-6 py-8">
       <div className="text-right">
-        <h3 className="font-bold">{`${firstName} ${lastName}`}</h3>
+        <h3 className="font-bold">{`${firstName}`}</h3>
         <p>Personal Account</p>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="w-24 h-24 relative">
         <img
-          className="max-h-24 max-w-24 border-4 rounded-full border-solid border-primary"
+          className="absolute w-full h-full object-cover border-4 rounded-full border-solid border-primary"
           src={imageUrl} 
-          alt={`${firstName} ${lastName}`}
+          alt={`${firstName}`}
+          onError={(e) => {
+            e.target.src = "./src/assets/profile.jpg";
+          }}
         />
       </div>
     </div>

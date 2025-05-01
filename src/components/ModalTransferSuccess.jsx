@@ -1,5 +1,4 @@
 import React from "react";
-import success from "../assets/success.svg";
 import { jsPDF } from "jspdf";
 
 const ModalTransferSuccess = ({ isOpen, onClose, transferData }) => {
@@ -37,7 +36,7 @@ const ModalTransferSuccess = ({ isOpen, onClose, transferData }) => {
                 </button>
 
                 <div className="flex justify-center mb-4">
-                    <img src={success} alt="Success Icon" className="w-20 h-20" />
+                    <img src="/Success.png" alt="Success Icon" className="w-20 h-20" />
                 </div>
 
                 <h2 className="text-2xl font-semibold text-primary mb-4">
