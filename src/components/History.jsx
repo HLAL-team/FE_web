@@ -113,7 +113,7 @@ const SearchAndFilter = ({
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset ke halaman 1 setelah search
+            setCurrentPage(1); 
           }}
           className="pl-12 flex-1 shadow-md p-2 rounded-md dark:bg-black w-full"
         />
