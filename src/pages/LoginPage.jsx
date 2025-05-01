@@ -1,4 +1,5 @@
 import hlalLogo from "/hlal-logo.svg";
+import hlalLogoDark from "/logo-darkmode.png";
 import authBanner from "../assets/auth-banner.png";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -96,7 +97,7 @@ const LoginPage = () => {
         </button>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img alt="hlal" src={hlalLogo} className="mx-auto h-10 w-auto" />
+          <img alt="hlal" src={isDark ? hlalLogoDark : hlalLogo} className="mx-auto h-10 w-auto" />
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

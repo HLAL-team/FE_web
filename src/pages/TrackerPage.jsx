@@ -253,7 +253,7 @@ const TrackerPage = () => {
     <Layout>
       <div>
         <Navbar />
-        <div className="mx-8">
+        <div className="mx-8 dark:text-white">
           <div>
             <h2 className="text-4xl text-left font-bold">My Tracker</h2>
           </div>
@@ -337,7 +337,7 @@ const TrackerPage = () => {
             </div>
           </div>
 
-          <div className="px-24 mb-16">
+          <div className="px-24 pb-16">
             {filteredTransactions.length === 0 ? (
               <p className="text-gray-500">No transactions found for the selected period.</p>
             ) : (

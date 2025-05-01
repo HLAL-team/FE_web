@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
-import Logo from "/hlal-logo.svg";
+import hlalLogo from "/hlal-logo.svg";
+import hlalLogoDark from "/logo-darkmode.png";
 import authBanner from "../assets/auth-banner.png";
 import { useTheme } from "../contexts/ThemeContext";
 import ModalTnC from "../components/ModalTnC";
@@ -92,7 +93,7 @@ const [showAlert, setShowAlert] = useState(false);
         </button>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img src={Logo} alt="HLAL" className="mx-auto h-10 w-auto" />
+          <img src={isDark ? hlalLogoDark : hlalLogo} alt="HLAL" className="mx-auto h-10 w-auto" />
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

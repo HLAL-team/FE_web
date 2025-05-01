@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router";
 import hlalLogo from "/hlal-logo.svg";
+import hlalLogoDark from "/logo-darkmode.png";
 import { useAuth } from "../contexts/AuthContext";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
@@ -28,9 +29,9 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
               <NavLink to="/" end>
                 <img
-                  src={hlalLogo}
+                  src={isDark ? hlalLogoDark : hlalLogo}
                   alt="Walled"
-                  className="h-7 dark:bg-white"
+                  className="h-7"
                 />
               </NavLink>
             </div>
@@ -67,7 +68,7 @@ const Navbar = () => {
               >
                 Transfer
               </NavLink>
-              
+
               <NavLink
                 className={({ isActive }) =>
                   isActive ? activeNavLink : inactiveNavLink
@@ -78,7 +79,7 @@ const Navbar = () => {
                 Top Up
               </NavLink>
 
-              <ProfileDropdown onClick={handleLogout}/>
+              <ProfileDropdown onClick={handleLogout} />
 
             </div>
             <button
@@ -86,20 +87,18 @@ const Navbar = () => {
               onClick={toggleTheme}
             >
               <div
-                className={`absolute transition-transform duration-300 ${
-                  isDark
+                className={`absolute transition-transform duration-300 ${isDark
                     ? "transform translate-y-0 opacity-100"
                     : "transform translate-y-full opacity-0"
-                }`}
+                  }`}
               >
                 <Moon key="moon" color="#F8AB39" size={28} />
               </div>
               <div
-                className={`absolute transition-transform duration-300 ${
-                  isDark
+                className={`absolute transition-transform duration-300 ${isDark
                     ? "transform -translate-y-full opacity-0"
                     : "transform translate-y-0 opacity-100"
-                }`}
+                  }`}
               >
                 <Sun key="sun" color="#F8AB39" size={28} />
               </div>
