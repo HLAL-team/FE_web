@@ -113,7 +113,7 @@ const SearchAndFilter = ({
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset ke halaman 1 setelah search
+            setCurrentPage(1); 
           }}
           className="pl-12 flex-1 shadow-md p-2 rounded-md dark:bg-black w-full"
         />
@@ -223,6 +223,11 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
 
   if (totalPages <= 1) return null;
 
+  // Calculate the range of pages to display
+  const maxVisiblePages = 5;
+  const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
   return (
     <div className="flex justify-center mt-4 font-semibold gap-1 flex-wrap">
       <button
@@ -233,26 +238,47 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
         First
       </button>
 
-      {[...Array(totalPages)].map((_, index) => (
+      {startPage > 1 && (
         <button
-          key={index}
-          onClick={() => changePage(index + 1)}
-          className={`px-4 py-2 border border-gray-400 ${
-            currentPage === index + 1
-              ? "bg-primary text-white dark:text-black"
-              : "bg-white dark:bg-black text-primary"
-          }`}
+          onClick={() => changePage(startPage - 1)}
+          className="px-4 py-2 bg-white dark:bg-black text-primary border border-gray-400"
         >
-          {index + 1}
+          ...
         </button>
-      ))}
+      )}
+
+      {[...Array(endPage - startPage + 1)].map((_, index) => {
+        const page = startPage + index;
+        return (
+          <button
+            key={page}
+            onClick={() => changePage(page)}
+            className={`px-4 py-2 border border-gray-400 ${
+              currentPage === page
+                ? "bg-primary text-white dark:text-black"
+                : "bg-white dark:bg-black text-primary"
+            }`}
+          >
+            {page}
+          </button>
+        );
+      })}
+
+      {endPage < totalPages && (
+        <button
+          onClick={() => changePage(endPage + 1)}
+          className="px-4 py-2 bg-white dark:bg-black text-primary border border-gray-400"
+        >
+          ...
+        </button>
+      )}
 
       <button
-        onClick={() => changePage(currentPage + 1)}
+        onClick={() => changePage(totalPages)}
         disabled={currentPage === totalPages}
         className="px-4 py-2 bg-white dark:bg-black text-primary rounded-r-md disabled:opacity-50 disabled:text-gray-700 dark:disabled:text-gray-300 border border-gray-400"
       >
-        Next
+        Last
       </button>
     </div>
   );

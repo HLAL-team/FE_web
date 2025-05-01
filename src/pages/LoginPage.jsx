@@ -138,9 +138,9 @@ const LoginPage = () => {
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500 dark:text-gray-300">
-            Belum punya akun?{" "}
+            Don't have an account?{" "}
             <NavLink to="/register" className="font-semibold text-primary">
-              Daftar di sini
+              Register here
             </NavLink>
           </p>
         </div>
