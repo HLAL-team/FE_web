@@ -15,7 +15,9 @@ const LandingPage = () => {
       <NavbarLanding />
       <div className="p-16 mt-16 text-center max-w-xl">
         <h1 className="text-3xl font-bold text-primary">
-          Everyday Halal Wallet
+          Everyday Halal Wallet.
+        </h1>
+        <h1 className="text-3xl font-bold text-primary">
           Stay blessed every transaction.
           Shariah-compliant. Stress-free.
         </h1>
